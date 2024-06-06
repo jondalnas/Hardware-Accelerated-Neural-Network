@@ -1,1 +1,3 @@
-from .gui import render
+"""GUI frontend for interface"""
+
+from .gui import render, create_window
