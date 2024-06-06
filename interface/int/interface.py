@@ -2,7 +2,7 @@
 import sys
 
 from .com import send_img, recv_vector, open_port
-from .gui import create_window, render
+from .gui import create_window, render, read_canvas
 
 def run(port: str):
     """Run program, by creating window and communicating over serial"""
@@ -14,7 +14,13 @@ def run(port: str):
 
 def upload():
     """Send image from canvas"""
-    send_img([[0, 1], [2, 3]])
+    def discretize(x: float) -> int:
+        return int(x * (2 ** 16 - 1))
+
+    def dl(l: list[float]) -> list[int]:
+        return list(map(discretize, l))
+
+    send_img(map(dl, read_canvas()))
 
 def download():
     """Function to download and render data from FPGA"""
