@@ -25,7 +25,7 @@ use work.types.all;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -34,7 +34,7 @@ use work.types.all;
 
 entity memory_fsm is
     generic (
-        MEMORY_ADDR_SIZE : integer := 16;
+        MEMORY_ADDR_SIZE : integer := 10;
         nn_num_in : positive;
         nn_num_out : positive;
         data_width : integer;
@@ -62,35 +62,48 @@ end memory_fsm;
 
 architecture Behavioral of memory_fsm is
 
-    type state_type is (START, READ, SEND, WAIT_DONE, RECIEVE, WRITE);
+    type state_type is (START, READ, SEND, WAIT_DONE, RECIEVE, WRITE, DONE);
     signal state, next_state : state_type;
-    signal i, next_i, j, next_j : integer;
+    signal i, next_i : unsigned(maximum(nn_num_in, nn_num_out)-1 downto 0);
+    signal rec_data : std_logic_vector(data_width - 1 downto 0);
 
 begin
 
     process(state)
     begin
+        led <= '0';
+        next_i <= TO_UNSIGNED(0, nn_num_in);
+        valid_out <= '0';
     
         case state is
-            when START => 
+            when START =>
+                next_i <= TO_UNSIGNED(0, nn_num_in);
                 if start_in = '1' then
                     next_state <= READ;
+                    led <= '0';
                 else
                     next_state <= START;
                 end if;
                 
             when READ => 
-                next_state <= Send;
+                next_i <= i;
+                mem_addr <= std_logic_vector(i + TO_UNSIGNED(memory_read_start, MEMORY_ADDR_SIZE));
+                mem_en <= '1';
+                next_state <= SEND;
                 
             when SEND =>
-                if i = nn_num_in - 1 then
+                mem_en <= '0';
+                nn_input(TO_INTEGER(i)) <= from_mem;
+                next_i <= i + 1;
+                if i = TO_UNSIGNED(nn_num_in - 1, i'length) then
                     next_state <= WAIT_DONE;
+                    valid_out <= '1';
                 else
                     next_state <= READ;
-                    next_i <= i + 1;
                 end if;
                 
             when WAIT_DONE => 
+                valid_out <= '1';
                 if valid_in = '1' then
                     next_state <= RECIEVE;
                 else 
@@ -98,10 +111,30 @@ begin
                 end if;
                 
             when RECIEVE => 
+                led <= '1';
+                next_i <= i;
+                rec_data <= nn_output(TO_INTEGER(i));
                 next_state <= WRITE;
             
             when WRITE =>
-                next_state <= START;
+                mem_en <= '1';
+                mem_we <= '1';
+                led <= '1';
+                mem_addr <= std_logic_vector(i + TO_UNSIGNED(memory_write_start, MEMORY_ADDR_SIZE));
+                to_mem <= rec_data;
+                next_i <= i + 1;
+                if i = TO_UNSIGNED(memory_write_end - memory_write_start - 1, i'length) then
+                    next_state <= DONE;
+                else
+                    next_state <= RECIEVE;
+                end if;
+            when DONE =>
+                led <= '1';
+                if start_in = '0' then
+                    next_state <= START;
+                else
+                    next_state <= DONE;
+                end if;
         end case;
     end process;
     
@@ -110,12 +143,10 @@ begin
         if rising_edge(clk) then
             if reset = '1' then
                 state <= START;
-                i <= 0;
-                j <= 0;
+                i <= TO_UNSIGNED(0, nn_num_in);
             else 
                 state <= next_state;
                 i <= next_i;
-                j <= next_j;
             end if;
         end if;
     end process;
