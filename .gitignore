@@ -3,3 +3,8 @@ __pycache__/
 
 # ONNX
 *.onnx
+
+# Vivado
+*.jou
+*.log
+*.str

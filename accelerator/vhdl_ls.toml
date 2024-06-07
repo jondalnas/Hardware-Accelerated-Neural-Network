@@ -1,0 +1,7 @@
+standard = "2008"
+
+[libraries]
+lib.files = [
+	'*.vhd',
+	'*/*.vhd'
+]
