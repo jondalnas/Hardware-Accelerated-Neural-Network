@@ -11,7 +11,7 @@
 import serial
 import random
 
-testing = True
+TESTING = False
 
 ser : serial.Serial = None
 
@@ -19,15 +19,15 @@ def open_port(port: str, baudrate: int = 9600) -> bool:
     """Open port at specific locations with certain baude rate"""
     global ser
 
-    if testing:
+    if TESTING:
         test()
         clear()
         return True
 
     ser = serial.Serial(port, baudrate)
 
-    if ser is None or not test():
-        return False
+    #  if ser is None or not test():
+    #      return False
 
     clear()
 
@@ -35,44 +35,49 @@ def open_port(port: str, baudrate: int = 9600) -> bool:
 
 def test() -> bool:
     """Test if connection to FPGA is successful"""
-    if testing:
+    if TESTING:
         print("Wrote: 79")
         print("Read in from COM")
         return True
 
-    ser.write(74) # Send 't'
+    ser.write(b't') # Send 't'
     return ser.read() == 79 # Expect 'y' in return
 
 def clear():
     """Clear memory on FPGA"""
-    if testing:
+    if TESTING:
         print("Wrote: 63")
         return
 
-    ser.write(63)
+    ser.write(b'c')
 
 def send_img(img: list[list[int]], data_width: int = 2):
     """Send an image formated as an array of arrays of grayscale pixels"""
-    if testing:
+    if TESTING:
         print("Wrote: 77")
     else:
-        ser.write(77)
+        ser.write(b'w')
 
     for r in img:
         for p in r:
             for i in range(data_width):
-                if testing:
+                if TESTING:
                     print("Wrote:", (p >> (8 * i)) & 255)
                 else:
-                    ser.write((p >> (8 * i)) & 255)
+                    ser.write(((p >> (8 * i)) & 255).to_bytes(1, 'big'))
 
 def recv_vector(size: int, data_width: int = 2) -> list[int]:
     """Recieve output vector from NN"""
+    if TESTING:
+        print("Write: 72")
+    else:
+        ser.write(b'r')
+
     res = []
     for _ in range(size):
         num = 0
         for i in range(data_width):
-            if testing:
+            if TESTING:
                 print("Read in from COM")
                 num += random.randint(0, 256) << (8 * i)
             else:
