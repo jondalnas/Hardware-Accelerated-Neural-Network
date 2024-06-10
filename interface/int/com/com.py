@@ -26,8 +26,8 @@ def open_port(port: str, baudrate: int = 9600) -> bool:
 
     ser = serial.Serial(port, baudrate)
 
-    #  if ser is None or not test():
-    #      return False
+    if ser is None or not test():
+        return False
 
     clear()
 
@@ -41,7 +41,7 @@ def test() -> bool:
         return True
 
     ser.write(b't') # Send 't'
-    return ser.read() == 79 # Expect 'y' in return
+    return ser.read() == b'y' # Expect 'y' in return
 
 def clear():
     """Clear memory on FPGA"""
@@ -64,7 +64,7 @@ def send_img(img: list[list[int]], data_width: int = 2):
                 if TESTING:
                     print("Wrote:", (p >> (8 * i)) & 255)
                 else:
-                    ser.write(((p >> (8 * i)) & 255).to_bytes(1, 'big'))
+                    ser.write(((p >> (8 * i)) & 255).to_bytes(1, 'little'))
 
 def recv_vector(size: int, data_width: int = 2) -> list[int]:
     """Recieve output vector from NN"""
@@ -75,14 +75,10 @@ def recv_vector(size: int, data_width: int = 2) -> list[int]:
 
     res = []
     for _ in range(size):
-        num = 0
-        for i in range(data_width):
-            if TESTING:
-                print("Read in from COM")
-                num += random.randint(0, 256) << (8 * i)
-            else:
-                num += ser.read() << (8 * i)
-
-        res.append(num)
+        if TESTING:
+            print("Read in from COM")
+            res.append(random.randint(0, 2 ** (8 * data_width)))
+        else:
+            res.append(int.from_bytes(ser.read(data_width), 'little'))
 
     return res
