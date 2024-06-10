@@ -34,7 +34,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity memory_fsm is
     generic (
-        MEMORY_ADDR_SIZE : integer := 10;
+        MEMORY_ADDR_SIZE : integer := 16;
         nn_num_in : positive;
         nn_num_out : positive;
         data_width : integer;
@@ -69,7 +69,7 @@ architecture Behavioral of memory_fsm is
 
 begin
 
-    process(state)
+    process(state, start_in, i, from_mem, valid_in, nn_output, rec_data)
     begin
         led <= '0';
         next_i <= TO_UNSIGNED(0, nn_num_in);
@@ -77,6 +77,7 @@ begin
     
         case state is
             when START =>
+                nn_input <= (others => (others => '0'));
                 next_i <= TO_UNSIGNED(0, nn_num_in);
                 if start_in = '1' then
                     next_state <= READ;

@@ -56,8 +56,18 @@ architecture Behavioral of nn is
 
 begin
 
-    valid_out <= valid_in;
-    output <= input;
+    process(clk, rst)
+    begin
+        if rising_edge(clk) then
+            if rst = '1' then
+                valid_out <= '0';
+                output <= (others => (others => '0'));
+            else
+                valid_out <= valid_in;
+                output <= input;
+            end if;
+        end if;
+    end process;
 
 --    process(input, valid_in, state)
 --    constant FOR_STEP : integer := 2;
