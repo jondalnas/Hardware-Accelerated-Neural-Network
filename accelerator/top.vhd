@@ -46,13 +46,17 @@ entity top is
         led5 : out std_logic;
         led6 : out std_logic;
         led7 : out std_logic;
-        led8 : out std_logic
+        led8 : out std_logic;
+        txled : out std_logic
     );
 end top;
 
 architecture Behavioral of top is
 
-    signal addr     : std_logic_vector(9 downto 0);
+    constant CLK_DIVISION_FACTOR : integer := 2; --(1 to 7)
+    signal clk   : std_logic;
+
+    signal addr     : std_logic_vector(15 downto 0);
     signal dataR    : std_logic_vector(31 downto 0);
     signal dataW    : std_logic_vector(31 downto 0);
     signal en       : std_logic;
@@ -62,7 +66,7 @@ architecture Behavioral of top is
 
     signal mem_enb   : std_logic;
     signal mem_web   : std_logic;
-    signal mem_addrb : std_logic_vector(9 downto 0);
+    signal mem_addrb : std_logic_vector(15 downto 0);
     signal mem_dib   : std_logic_vector(31 downto 0);
     signal mem_dob   : std_logic_vector(31 downto 0);
 
@@ -93,21 +97,32 @@ begin
         end loop;
     end process;
     
-    led1 <= correct(0);
-    led2 <= correct(1);
-    led3 <= correct(2);
-    led4 <= correct(3);
-    led5 <= correct(4);
-    led6 <= correct(5);
-    led7 <= correct(6);
-    led8 <= correct(7);
+    -- Testing    
+    led1 <= data_stream_out(0);
+    led2 <= data_stream_out(1);
+    led3 <= data_stream_out(2);
+    led4 <= data_stream_out(3);
+    led5 <= data_stream_out(4);
+    led6 <= data_stream_out(5);
+    led7 <= data_stream_out(6);
+    led8 <= data_stream_out(7);
+    txled <= serial_tx;
+    
+    clock_divider_inst_0 : entity work.clock_divider
+        generic map(
+            DIVIDE => CLK_DIVISION_FACTOR
+        )
+        port map(
+            clk_in  => clk_100mhz,
+            clk_out => clk
+        );
     
     controller_inst_0 : entity work.controller
         generic map(
-            MEMORY_ADDR_SIZE => 10
+            MEMORY_ADDR_SIZE => 16
         )
         port map(
-            clk                => clk_100mhz,
+            clk                => clk,
             reset              => rst,
             data_stream_tx     => data_stream_in,
             data_stream_tx_stb => data_stream_in_stb,
@@ -123,11 +138,11 @@ begin
         
         uart_inst_0 : entity work.uart
         generic map(
-            baud            => 115200,
-            clock_frequency => positive(100_000_000)
+            baud            => 9600,
+            clock_frequency => positive(100_000_000 / 2)
         )
         port map(
-            clock               => clk_100mhz,
+            clock               => clk,
             reset               => rst,
             data_stream_in      => data_stream_in,
             data_stream_in_stb  => data_stream_in_stb,
@@ -140,10 +155,10 @@ begin
         
         memory3_inst_0 : entity work.memory3
         generic map(
-            ADDR_SIZE => 10
+            ADDR_SIZE => 16
         )
         port map(
-            clk   => clk_100mhz,
+            clk   => clk,
             -- Port a (for the accelerator)
             ena   => en,
             wea   => we,
@@ -165,7 +180,7 @@ begin
             data_width => 32
         )
         port map (
-            clk => clk_100mhz,
+            clk => clk,
             rst => rst,
             valid_in => valid_to_nn,
             valid_out => valid_from_nn,
@@ -185,7 +200,7 @@ begin
         )
         
         port map (
-            clk => clk_100mhz,
+            clk => clk,
             reset => rst,
             nn_input => data_to_nn,
             nn_output => data_from_nn,
