@@ -60,11 +60,10 @@ def send_img(img: list[list[int]], data_width: int = 2):
 
     for r in img:
         for p in r:
-            for i in range(data_width):
-                if TESTING:
-                    print("Wrote:", (p >> (8 * i)) & 255)
-                else:
-                    ser.write(((p >> (8 * i)) & 255).to_bytes(1, 'little'))
+            if TESTING:
+                print("Wrote:", p)
+            else:
+                ser.write(min(p, 2 ** (8 * data_width) - 1).to_bytes(data_width, 'little'))
 
 def recv_vector(size: int, data_width: int = 2) -> list[int]:
     """Recieve output vector from NN"""
