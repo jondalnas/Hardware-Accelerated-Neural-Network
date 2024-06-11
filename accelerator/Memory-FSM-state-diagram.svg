@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="62cm" height="32cm" viewBox="157 88 1237 628" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <ellipse style="fill: #ffffff" cx="313.433" cy="248.966" rx="71.5673" ry="60.0336"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="313.433" cy="248.966" rx="71.5673" ry="60.0336"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="313.433" y="244.866">
+      <tspan x="313.433" y="244.866">start /</tspan>
+      <tspan x="313.433" y="260.866">inst_count &lt;= 0</tspan>
+    </text>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="528.933" cy="187.466" rx="61.0673" ry="44.5336"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="528.933" cy="187.466" rx="61.0673" ry="44.5336"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="528.933" y="191.366">
+      <tspan x="528.933" y="191.366">Input_Read</tspan>
+    </text>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="801.933" cy="187.466" rx="69.0673" ry="49.5336"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="801.933" cy="187.466" rx="69.0673" ry="49.5336"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="801.933" y="183.366">
+      <tspan x="801.933" y="183.366">Input_Send /</tspan>
+      <tspan x="801.933" y="199.366">next_i &lt;= i + 1</tspan>
+    </text>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="880.933" cy="375.966" rx="104.909" ry="78.3277"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="880.933" cy="375.966" rx="104.909" ry="78.3277"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="880.933" y="371.866">
+      <tspan x="880.933" y="371.866">Wait-done /</tspan>
+      <tspan x="880.933" y="387.866">inst_count &lt;= inst_count +1</tspan>
+    </text>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="527.933" cy="602.466" rx="70.0673" ry="44.5336"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="527.933" cy="602.466" rx="70.0673" ry="44.5336"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="527.933" y="598.366">
+      <tspan x="527.933" y="598.366">Write /</tspan>
+      <tspan x="527.933" y="614.366">next_i = i + 1</tspan>
+    </text>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 385.996 248.966 C 444.262,248.966 408.609,187.466 455.875,187.466"/>
+    <polygon style="fill: #000000" points="455.875,192.466 465.875,187.466 455.875,182.466 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="455.875,192.466 465.875,187.466 455.875,182.466 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 591.001 187.466 C 684.293,187.466 638.575,187.466 720.867,187.466"/>
+    <polygon style="fill: #000000" points="720.867,192.466 730.867,187.466 720.867,182.466 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="720.867,192.466 730.867,187.466 720.867,182.466 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 816.965 236.771 C 829.882,279.139 877.759,263.686 878.38,285.657"/>
+    <polygon style="fill: #000000" points="873.382,285.798 878.663,295.653 883.378,285.516 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="873.382,285.798 878.663,295.653 883.378,285.516 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 262.828 291.416 C 242.962,348.45 163,189 237.241,221.572"/>
+    <polygon style="fill: #000000" points="235.232,226.151 246.398,225.59 239.249,216.994 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="235.232,226.151 246.398,225.59 239.249,216.994 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 784.01 405.94 C 778.32,405.94 752.85,500.834 831.342,453.97"/>
+    <polygon style="fill: #000000" points="833.905,458.263 839.928,448.844 828.778,449.677 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="833.905,458.263 839.928,448.844 828.778,449.677 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="157" y="289">
+    <tspan x="157" y="289">!start_in</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="692" y="460.1" width="222.2" height="14.9"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="692" y="472">
+      <tspan x="692" y="472">!valid &amp; inst_count != max_inst - 1</tspan>
+    </text>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="890" y="585">
+    <tspan x="890" y="585">valid &amp; inst = 2 | inst = 3 &amp; inst_count != max_inst -1</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="375" y="200">
+    <tspan x="375" y="200">start_in</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="593" y="100">
+    <tspan x="593" y="100">i != NUM_INPUTS - 1</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="834" y="251">
+    <tspan x="834" y="251">i = NUM_INPUTS - 1</tspan>
+  </text>
+  <g>
+    <ellipse style="fill: #ffffff" cx="780.933" cy="586.466" rx="65.0673" ry="46.5336"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="780.933" cy="586.466" rx="65.0673" ry="46.5336"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="780.933" y="590.366">
+      <tspan x="780.933" y="590.366">Recieve</tspan>
+    </text>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 890.064 454.995 C 896.98,514.863 897.468,586.466 858.004,586.466"/>
+    <polygon style="fill: #000000" points="858.004,581.466 848.004,586.466 858.004,591.466 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="858.004,581.466 848.004,586.466 858.004,591.466 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 714.88 586.466 C 649.808,586.466 664.072,602.466 610,602.466"/>
+    <polygon style="fill: #000000" points="610,597.466 600,602.466 610,607.466 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="610,597.466 600,602.466 610,607.466 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 575.283 636.321 C 654.351,692.855 679.561,701.063 738.205,634.769"/>
+    <polygon style="fill: #000000" points="741.95,638.081 744.831,627.278 734.46,631.456 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="741.95,638.081 744.831,627.278 734.46,631.456 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 591.681 582.413 C 698.597,548.782 660.923,422.3 768.242,399.699"/>
+    <polygon style="fill: #000000" points="769.272,404.591 778.027,397.638 767.212,394.806 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="769.272,404.591 778.027,397.638 767.212,394.806 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 775.022 375.966 C 616.492,375.966 620.091,449.658 480.324,413.542"/>
+    <polygon style="fill: #000000" points="481.575,408.701 470.642,411.04 479.073,418.383 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="481.575,408.701 470.642,411.04 479.073,418.383 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="546.85" y="397.934" width="167.15" height="14.9"/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="546.85" y="409.834">
+      <tspan x="546.85" y="409.834">inst_count = max_inst  - 1</tspan>
+    </text>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 779.799 352.45 C 671.715,327.318 638.852,278.965 578.389,228.634"/>
+    <polygon style="fill: #000000" points="581.588,224.792 570.703,222.237 575.19,232.477 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="581.588,224.792 570.703,222.237 575.19,232.477 "/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="655.85" y="285.834">
+    <tspan x="655.85" y="285.834">valid &amp; inst = 0 &amp; </tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="621.85" y="706.834">
+    <tspan x="621.85" y="706.834"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="597.85" y="712.834">
+    <tspan x="597.85" y="712.834">i &lt; NUM_OUTPUTS - 1</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="573.85" y="518.934" width="199.6" height="14.9"/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="573.85" y="530.834">
+      <tspan x="573.85" y="530.834">i = NUM_INPUTS - 1 &amp; inst != 3</tspan>
+    </text>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 523.375 557.064 C 518.292,506.432 525.85,274.834 528.144,242.972"/>
+    <polygon style="fill: #000000" points="533.131,243.331 528.861,232.997 523.156,242.613 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="533.131,243.331 528.861,232.997 523.156,242.613 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="431.75" y="473.834" width="194.45" height="14.9"/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="431.75" y="485.734">
+      <tspan x="431.75" y="485.734">i = NUM_INPUTS - 1 &amp; inst = 3</tspan>
+    </text>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="1135.82" cy="197.368" rx="61.0673" ry="44.5336"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="1135.82" cy="197.368" rx="61.0673" ry="44.5336"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="1135.82" y="201.268">
+      <tspan x="1135.82" y="201.268">Stack_Read</tspan>
+    </text>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="1331.72" cy="197.368" rx="61.0673" ry="44.5336"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="1331.72" cy="197.368" rx="61.0673" ry="44.5336"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="1331.72" y="201.268">
+      <tspan x="1331.72" y="201.268">Stack_Send</tspan>
+    </text>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 986.778 375.966 C 1071.4,375.966 989.155,197.368 1062.78,197.368"/>
+    <polygon style="fill: #000000" points="1062.78,202.368 1072.78,197.368 1062.78,192.368 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1062.78,202.368 1072.78,197.368 1062.78,192.368 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 1197.85 197.368 C 1262.89,197.368 1204.65,197.368 1258.69,197.368"/>
+    <polygon style="fill: #000000" points="1258.69,202.368 1268.69,197.368 1258.69,192.368 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1258.69,202.368 1268.69,197.368 1258.69,192.368 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 1309.4,154.923 A 100.946,100.946 0 0 0 1165.82,147.123"/>
+    <polygon style="fill: #000000" points="1161.67,143.37 1158.8,154.173 1169.17,149.993 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1161.67,143.37 1158.8,154.173 1169.17,149.993 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 765.836,144.194 A 156.805,156.805 0 0 0 568.768,141.174"/>
+    <polygon style="fill: #000000" points="565.181,137.159 561.108,147.571 571.881,144.582 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="565.181,137.159 561.108,147.571 571.881,144.582 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 1298.53 235.815 C 1212.66,335.281 1127.31,449.035 989.94,408.294"/>
+    <polygon style="fill: #000000" points="991.362,403.501 980.353,405.451 988.519,413.088 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="991.362,403.501 980.353,405.451 988.519,413.088 "/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1195.75" y="104.734">
+    <tspan x="1195.75" y="104.734">i != MAX_STACK - 1</tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1204.65" y="370.734">
+    <tspan x="1204.65" y="370.734">i = MAX_STACK - 1</tspan>
+  </text>
+  <g>
+    <ellipse style="fill: #ffffff" cx="400.317" cy="392.868" rx="71.5673" ry="60.0336"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="400.317" cy="392.868" rx="71.5673" ry="60.0336"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="400.317" y="396.768">
+      <tspan x="400.317" y="396.768">Done</tspan>
+    </text>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 327.749 392.868 C 298.24,392.868 309.988,361.841 311.235,320.968"/>
+    <polygon style="fill: #000000" points="316.233,321.12 311.541,310.973 306.238,320.815 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="316.233,321.12 311.541,310.973 306.238,320.815 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 324.984,420.836 A 29.7116,29.7116 0 1 0 372.93,448.332"/>
+    <polygon style="fill: #000000" points="325.324,424.043 333.248,416.156 322.184,414.549 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="325.324,424.043 333.248,416.156 322.184,414.549 "/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="305.85" y="490.834">
+    <tspan x="305.85" y="490.834">start_in</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="243.75" y="368.734">
+    <tspan x="243.75" y="368.734">!start_in</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="938.85" y="282.934" width="281.4" height="14.9"/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="938.85" y="294.834">
+      <tspan x="938.85" y="294.834">valid &amp; inst = 1 &amp; inst_count != max_inst -1</tspan>
+    </text>
+  </g>
+</svg>
