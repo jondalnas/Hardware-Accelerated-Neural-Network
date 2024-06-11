@@ -8,3 +8,6 @@ __pycache__/
 *.jou
 *.log
 *.str
+
+# Markdown
+*.html
