@@ -22,6 +22,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use work.types.all;
+use work.defs.all;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -62,10 +63,13 @@ end memory_fsm;
 
 architecture Behavioral of memory_fsm is
 
-    type state_type is (START, READ, SEND, WAIT_DONE, RECIEVE, WRITE, DONE);
+    type state_type is (INPUT_START, INPUT_READ, SEND, WAIT_DONE, RECIEVE, WRITE, STACK_READ, STACK_SEND, DONE);
     signal state, next_state : state_type;
     signal i, next_i : unsigned(maximum(nn_num_in, nn_num_out)-1 downto 0);
     signal rec_data : std_logic_vector(data_width - 1 downto 0);
+    signal inst : std_logic_vector(1 downto 0);
+    signal addr : std_logic_vector(MEMORY_ADDR_SIZE - 1 downto 0);
+    signal inst_count : unsigned(INSTRUCTIONS'range);
 
 begin
 
@@ -76,17 +80,17 @@ begin
         valid_out <= '0';
     
         case state is
-            when START =>
+            when INPUT_START =>
                 nn_input <= (others => (others => '0'));
                 next_i <= TO_UNSIGNED(0, nn_num_in);
                 if start_in = '1' then
-                    next_state <= READ;
+                    next_state <= INPUT_READ;
                     led <= '0';
                 else
-                    next_state <= START;
+                    next_state <= INPUT_START;
                 end if;
                 
-            when READ => 
+            when INPUT_READ => 
                 next_i <= i;
                 mem_addr <= std_logic_vector(i + TO_UNSIGNED(memory_read_start, MEMORY_ADDR_SIZE));
                 mem_en <= '1';
@@ -100,7 +104,7 @@ begin
                     next_state <= WAIT_DONE;
                     valid_out <= '1';
                 else
-                    next_state <= READ;
+                    next_state <= INPUT_READ;
                 end if;
                 
             when WAIT_DONE => 
@@ -132,7 +136,7 @@ begin
             when DONE =>
                 led <= '1';
                 if start_in = '0' then
-                    next_state <= START;
+                    next_state <= INPUT_START;
                 else
                     next_state <= DONE;
                 end if;
@@ -143,7 +147,7 @@ begin
     begin 
         if rising_edge(clk) then
             if reset = '1' then
-                state <= START;
+                state <= INPUT_READ;
                 i <= TO_UNSIGNED(0, nn_num_in);
             else 
                 state <= next_state;
