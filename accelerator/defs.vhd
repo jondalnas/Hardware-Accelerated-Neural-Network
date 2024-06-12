@@ -35,5 +35,6 @@ use work.types.all;
 package defs is
     constant MAX_STACK : Integer := 256;
     constant INSTRUCTIONS : array_type(3 downto 0)(17 downto 0) := ("000000000000000000", "000000000000000001", "000000000000000010", "000000000000000011");
+    constant INPUT_SIZE : Integer := 4;
 
 end defs;
