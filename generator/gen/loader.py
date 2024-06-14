@@ -457,6 +457,7 @@ class Model:
             queue.extend(n.outputs)
 
     def get_max_in_out_size(self) -> tuple[int, int]:
+        # TODO: Not correct! Need to take feedback into account
         max_input = 0
         max_output = 0
 
@@ -488,18 +489,25 @@ class Model:
                 for c in n.outputs:
                     c.replace_input(n, p)
 
-    def generate_signals(self) -> set[str]:
-        res = set()
+                self.nodes.remove(n)
+
+    def generate_signals(self) -> list[tuple[str, int]]:
+        res = []
 
         for n in self.nodes:
             if isinstance(n, (ConstNode, InputNode)):
                 continue
 
             if len(n.outputs) != 0:
-                res.add(n.name + "_o")
+                res.append((n.name + "_o", n.calc_output_node_size()))
+
+            for i,input_node in enumerate(n.get_inputs()):
+                if isinstance(input_node, (ConstNode)):
+                    continue
+
+                res.append((n.name + "_i_{}".format(i), input_node.calc_output_node_size()))
 
         return res
-
 
     def __repr__(self) -> str:
         res = ""

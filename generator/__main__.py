@@ -2,9 +2,9 @@
 
 import sys
 import os.path
-import onnx
 
 from gen import Model
+from gen import convert_model
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -24,3 +24,5 @@ if __name__ == "__main__":
     print(m)
     print()
     print("List of all signals:", m.generate_signals())
+    print()
+    print(convert_model(m))
