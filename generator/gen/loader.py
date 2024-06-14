@@ -15,6 +15,27 @@ class Node:
     def add_input(self, name: str, n: Node):
         pass
 
+    def replace_input(self, original: Node, new: Node):
+        pass
+
+    def calc_input_node_size(self, input_nn_size: int) -> int:
+        res = 0
+        for i in self.get_inputs():
+            if isinstance(i, InputNode):
+                res += input_nn_size
+                continue
+
+            res += i.calc_output_node_size()
+
+        return res
+
+    def calc_output_node_size(self) -> int:
+        res = 1
+        for e in self.output_size:
+            res *= e
+
+        return res
+
     def add_output(self, output: Node):
         self.outputs.append(output)
 
@@ -61,6 +82,12 @@ class DivNode(Node):
 
     def get_inputs(self) -> list[Node]:
         return [self.a, self.b]
+
+    def replace_input(self, original: Node, new: Node):
+        if self.a == original:
+            self.a = new
+        else:
+            self.b = new
 
     def calc_output_dimensions(self):
         if self.a.output_size == self.b.output_size:
@@ -113,6 +140,12 @@ class ConvNode(Node):
     def get_inputs(self) -> list[Node]:
         return [self.x, self.w]
 
+    def replace_input(self, original: Node, new: Node):
+        if self.x == original:
+            self.x = new
+        else:
+            self.w = new
+
     def calc_output_dimensions(self):
         if self.x.output_size[1] != self.w.output_size[1]:
             raise Exception("Wrong channel dimension")
@@ -144,6 +177,12 @@ class AddNode(Node):
 
     def get_inputs(self) -> list[Node]:
         return [self.a, self.b]
+
+    def replace_input(self, original: Node, new: Node):
+        if self.a == original:
+            self.a = new
+        else:
+            self.b = new
 
     def calc_output_dimensions(self):
         if self.a.output_size == self.b.output_size:
@@ -183,6 +222,9 @@ class ReluNode(Node):
     def get_inputs(self) -> list[Node]:
         return [self.x]
 
+    def replace_input(self, _: Node, new: Node):
+        self.x = new
+
     def calc_output_dimensions(self):
         self.output_size = self.x.output_size
 
@@ -208,6 +250,9 @@ class MaxPoolNode(Node):
 
     def get_inputs(self):
         return [self.x]
+
+    def replace_input(self, _: Node, new: Node):
+        self.x = new
 
     def calc_output_dimensions(self):
         dims = self.x.output_size[:2]
@@ -235,6 +280,9 @@ class ReshapeNode(Node):
 
     def get_inputs(self) -> list[Node]:
         return [self.data]
+
+    def replace_input(self, _: Node, new: Node):
+        self.data = new
 
     def calc_output_dimensions(self):
         self.output_size = self.shape
@@ -280,6 +328,12 @@ class MatMulNode(Node):
 
         self.output_size = dims
 
+    def replace_input(self, original: Node, new: Node):
+        if self.a == original:
+            self.a = new
+        else:
+            self.b = new
+
     def __str__(self):
         return "MathMul"
 
@@ -301,6 +355,9 @@ class OutputNode(Node):
     def get_inputs(self) -> list[Node]:
         return [self.input_node]
 
+    def replace_input(self, _: Node, new: Node):
+        self.input_node = new
+
     def __str__(self):
         return "Output"
 
@@ -308,7 +365,7 @@ class Model:
     nodes: list[Node] = []
 
     outputs: list[Node] = []
-    inputs: list[Node] = []
+    inputs: list[InputNode] = []
     constants: list[Node] = []
 
     input_attribs: dict[str, list[int]] = {}
@@ -399,6 +456,38 @@ class Model:
 
             queue.extend(n.outputs)
 
+    def get_max_in_out_size(self) -> tuple[int, int]:
+        max_input = 0
+        max_output = 0
+
+        inputs_size = 0
+        for i in self.inputs:
+            inputs_size += i.calc_output_node_size()
+
+        for n in self.nodes:
+            in_node_size = n.calc_input_node_size(inputs_size)
+            out_node_size = n.calc_output_node_size()
+
+            if max_input < in_node_size:
+                max_input = in_node_size
+
+            if max_output < out_node_size:
+                max_output = out_node_size
+
+        return (max_input, max_output)
+
+    def optimize_tree(self) -> None:
+        # TODO: Also optimize operators only taking constant inputs
+
+        for n in self.nodes:
+            if isinstance(n, ReshapeNode):
+                p = n.get_inputs()[0]
+                p.outputs.remove(n)
+                p.outputs.extend(n.outputs)
+
+                for c in n.outputs:
+                    c.replace_input(n, p)
+
     def __repr__(self) -> str:
         res = ""
         tree_str = ""
@@ -464,7 +553,6 @@ def convert_op_type(n: onnx.NodeProto) -> Node:
             return MatMulNode(n.name, n.input)
 
     raise Exception(n.op_type + " operation not defined")
-
 
 def find_attribute(attrib: list[onnx.AttributeProto], s: str) -> onnx.AttributeProto:
     for a in attrib:

@@ -17,3 +17,8 @@ if __name__ == "__main__":
     m.calc_dimensions()
 
     print(m)
+    print()
+    print("Max input and output:", m.get_max_in_out_size())
+    print()
+    m.optimize_tree()
+    print(m)
