@@ -488,6 +488,19 @@ class Model:
                 for c in n.outputs:
                     c.replace_input(n, p)
 
+    def generate_signals(self) -> set[str]:
+        res = set()
+
+        for n in self.nodes:
+            if isinstance(n, (ConstNode, InputNode)):
+                continue
+
+            if len(n.outputs) != 0:
+                res.add(n.name + "_o")
+
+        return res
+
+
     def __repr__(self) -> str:
         res = ""
         tree_str = ""

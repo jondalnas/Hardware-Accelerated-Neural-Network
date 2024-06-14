@@ -22,3 +22,5 @@ if __name__ == "__main__":
     print()
     m.optimize_tree()
     print(m)
+    print()
+    print("List of all signals:", m.generate_signals())
