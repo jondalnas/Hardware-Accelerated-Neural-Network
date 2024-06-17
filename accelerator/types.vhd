@@ -24,5 +24,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 package types is
     type array_type is array(integer range <>) of std_logic_vector;
+    type dimensions_type is array(integer range <>) of integer;
 
 end types;
