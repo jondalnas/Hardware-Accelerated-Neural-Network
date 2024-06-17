@@ -3,6 +3,7 @@ import os.path
 import onnx
 
 from enum import Enum
+from dataclasses import dataclass
 
 class MemoryInstructions(Enum):
     LoadIn = 0,
@@ -16,6 +17,8 @@ class Node:
     outputs: list[Node]
     output_size: list[int]
     output_value_size: int = -1
+
+    is_feedback: bool = False
 
     def __init__(self, name: str):
         self.name = name
@@ -57,11 +60,60 @@ class Node:
     def get_inputs(self) -> list[Node]:
         return []
 
+    def get_input_index(self, node: Node) -> int:
+        for index, input_node in enumerate(self.get_inputs()):
+            if input_node == node:
+                return index
+
+        return -1
+
     def calc_output_dimensions(self):
         pass
 
-    def calc_instruction_list_at_node(self) -> tuple[list[Node | tuple[MemoryInstructions, int]], int]:
-        instr: list[Node] = []
+    def generate_connections(self) -> tuple[str, bool]:
+        res = ""
+
+        def rem_const(e: tuple[int, Node]):
+            return not isinstance(e[1], ConstNode)
+
+        inputs = list(filter(rem_const, enumerate(self.get_inputs())))
+
+        def node_size(e: tuple[int, Node]):
+            if isinstance(e[1], InputNode):
+                return -99999
+
+            return e[1].calc_output_node_size()
+
+        inputs.sort(key=node_size)
+
+        should_handshake = False
+
+        curr_sum_size = 0
+        for index, input_node in inputs[:-1]:
+            curr_size = input_node.calc_output_node_size()
+            res += "                " + self.name + f"_i_{index} <= input({curr_sum_size + curr_size - 1} downto {curr_sum_size})\n"
+            curr_sum_size += curr_size
+
+            should_handshake = True
+
+        if isinstance(inputs[-1][1], InputNode):
+            curr_size = inputs[-1][1].calc_output_node_size()
+            res += "                " + self.name + f"_i_{len(inputs)-1} <= input({curr_sum_size + curr_size - 1} downto {curr_sum_size})\n"
+
+            should_handshake = True
+        else:
+            curr_size = inputs[-1][1].calc_output_node_size()
+            res += "                " + self.name + f"_i_{len(inputs)-1} <= feedback({curr_size - 1} downto 0)\n"
+
+        if self.is_feedback:
+            res += f"                next_feedback({self.calc_output_node_size() - 1} downto 0) <= " + self.name + "_o\n"
+            return (res, should_handshake)
+        else:
+            res += f"                output({self.calc_output_node_size() - 1} downto 0) <= " + self.name + "_o\n"
+            return (res, True)
+
+    def calc_instruction_list_at_node(self) -> list[Node | tuple[MemoryInstructions, int]]:
+        instr: list[Node | tuple[MemoryInstructions, int]] = []
 
         takes_nn_input: bool = False
         valid_inputs: list[Node] = []
@@ -69,7 +121,8 @@ class Node:
             if isinstance(i, InputNode):
                 takes_nn_input = True
                 continue
-            elif isinstance(i, ConstNode):
+
+            if isinstance(i, ConstNode):
                 continue
 
             valid_inputs.append(i)
@@ -79,14 +132,10 @@ class Node:
 
         valid_inputs.sort(key=size)
 
-        max_feedback: int = 0
-
         for i in valid_inputs:
-            l, mfb = i.calc_instruction_list_at_node()
+            l = i.calc_instruction_list_at_node()
             instr.extend(l)
             instr.append((MemoryInstructions.PushMem, i.calc_output_node_size()))
-            if (max_feedback < mfb):
-                max_feedback = mfb
 
         instr = instr[:-1] # Remove final store instruction
         if len(valid_inputs) > 1:
@@ -100,10 +149,7 @@ class Node:
         else:
             instr.append(self)
 
-        if max_feedback < self.calc_output_node_size():
-            max_feedback = self.calc_output_node_size()
-
-        return (instr, max_feedback)
+        return instr
 
 class ConstNode(Node):
     c: list[int]
@@ -395,7 +441,7 @@ class MatMulNode(Node):
             self.b = new
 
     def __str__(self):
-        return "MathMul"
+        return "MatMul"
 
 class InputNode(Node):
     def __init__(self, name: str, dimensions: list[int]):
@@ -421,12 +467,20 @@ class OutputNode(Node):
     def __str__(self):
         return "Output"
 
+@dataclass
+class ModelParams:
+    instructions: list[Node | tuple[MemoryInstructions, int]]
+    operations: list[Node]
+    max_feedback: int
+    max_output: int
+    max_input: int
+
 class Model:
     nodes: list[Node] = []
 
     outputs: list[Node] = []
     inputs: list[InputNode] = []
-    constants: list[Node] = []
+    constants: list[ConstNode] = []
 
     input_attribs: dict[str, list[int]] = {}
     output_attribs: dict[str, list[int]] = {}
@@ -567,14 +621,25 @@ class Model:
 
         return res
 
-    def calc_instruction_list(self) -> tuple[list[Node | tuple[MemoryInstructions, int]], int]:
-        # TODO: Calc max feedback, max output, max input
+    def calc_model_params(self) -> ModelParams:
         res = []
 
+        input_nn_size = 0
+
+        for i in self.inputs:
+            input_nn_size += i.calc_output_node_size()
+
         max_feedback = 0
+        max_output = 0
+        max_input = input_nn_size
+
+        operators = []
 
         for o in self.outputs:
-            instr, maxfb = o.calc_instruction_list_at_node()
+            max_output = max(o.calc_input_node_size(input_nn_size), max_output)
+
+        for o in self.outputs:
+            instr = o.calc_instruction_list_at_node()
 
             skip_next: bool = False
             new_instr: list[Node | tuple[MemoryInstructions, int]] = []
@@ -583,26 +648,43 @@ class Model:
                     skip_next = False
                     continue
 
-                if isinstance(e, tuple) and isinstance(en, tuple):
-                    if e[0] == MemoryInstructions.PushMem and en[0] == MemoryInstructions.LoadIn:
-                        # Is push + Load In
-                        new_instr.append((MemoryInstructions.PushMemAndLoadIn, e[1]))
-                        skip_next = True
-                        continue
-                    elif e[0] == MemoryInstructions.LoadMem and en[0] == MemoryInstructions.LoadIn:
-                        # Is load memory + in
-                        new_instr.append((MemoryInstructions.LoadInAndMem, e[1]))
-                        skip_next = True
-                        continue
+                if isinstance(e, tuple):
+                    if isinstance(en, tuple):
+                        if e[0] == MemoryInstructions.PushMem and en[0] == MemoryInstructions.LoadIn:
+                            # Is push + Load In
+                            new_instr.append((MemoryInstructions.PushMemAndLoadIn, e[1]))
+                            skip_next = True
+                            continue
+
+                        if e[0] == MemoryInstructions.LoadMem and en[0] == MemoryInstructions.LoadIn:
+                            # Is load memory + in
+                            new_instr.append((MemoryInstructions.LoadInAndMem, e[1]))
+                            skip_next = True
+
+                            max_input = max(e[1] + input_nn_size, max_input)
+                            continue
+
+                    elif e[0] == MemoryInstructions.LoadMem:
+                        # Is loading only from memory
+                        max_input = max(e[1], max_input)
+
+                    if e[0] == MemoryInstructions.PushMem:
+                        max_output = max(e[1], max_output)
+
+                else:
+                    operators.append(e)
+
+                    if isinstance(en, Node) or en[0] != MemoryInstructions.PushMem:
+                        e.is_feedback = True
+                        max_feedback = max(e.calc_output_node_size(), max_feedback)
 
                 new_instr.append(e)
 
-            res.append(instr)
+            new_instr.append(instr[-1])
 
-            if max_feedback < maxfb:
-                max_feedback = maxfb
+            res.extend(new_instr)
 
-        return (res, max_feedback)
+        return ModelParams(res, operators, max_feedback, max_output, max_input)
 
     def __repr__(self) -> str:
         res = ""

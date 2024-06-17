@@ -29,6 +29,8 @@ architecture Behavioral of nn is
 -- SIGNALS
 begin
 -- ENTITIES
+
+-- CONSTANTS
     process(all)
     begin
         feedback_next <= feedback;
