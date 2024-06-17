@@ -39,7 +39,12 @@ def get_fsm(model: Model) -> str:
     res = ""
     num_states = len(model.nodes) - len(model.inputs) - len(model.outputs) - len(model.constants)
 
-    for i in range(1,num_states):
+    p, max_fb = model.calc_instruction_list()
+
+    print(p)
+    print(max_fb)
+
+    for i in range(1, num_states):
         res += "            when {}:\n".format(i)
         res += "                next_state <= state + 1;\n"
 

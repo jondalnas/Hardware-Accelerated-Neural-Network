@@ -2,10 +2,20 @@ from __future__ import annotations
 import os.path
 import onnx
 
+from enum import Enum
+
+class MemoryInstructions(Enum):
+    LoadIn = 0,
+    LoadMem = 1,
+    PushMem = 2,
+    PushMemAndLoadIn = 3
+    LoadInAndMem = 4
+
 class Node:
     name: str
     outputs: list[Node]
     output_size: list[int]
+    output_value_size: int = -1
 
     def __init__(self, name: str):
         self.name = name
@@ -30,9 +40,14 @@ class Node:
         return res
 
     def calc_output_node_size(self) -> int:
+        if self.output_value_size != -1:
+            return self.output_value_size
+
         res = 1
         for e in self.output_size:
             res *= e
+
+        self.output_value_size = res
 
         return res
 
@@ -44,6 +59,51 @@ class Node:
 
     def calc_output_dimensions(self):
         pass
+
+    def calc_instruction_list_at_node(self) -> tuple[list[Node | tuple[MemoryInstructions, int]], int]:
+        instr: list[Node] = []
+
+        takes_nn_input: bool = False
+        valid_inputs: list[Node] = []
+        for i in self.get_inputs():
+            if isinstance(i, InputNode):
+                takes_nn_input = True
+                continue
+            elif isinstance(i, ConstNode):
+                continue
+
+            valid_inputs.append(i)
+
+        def size(e: Node):
+            return e.calc_output_node_size()
+
+        valid_inputs.sort(key=size)
+
+        max_feedback: int = 0
+
+        for i in valid_inputs:
+            l, mfb = i.calc_instruction_list_at_node()
+            instr.extend(l)
+            instr.append((MemoryInstructions.PushMem, i.calc_output_node_size()))
+            if (max_feedback < mfb):
+                max_feedback = mfb
+
+        instr = instr[:-1] # Remove final store instruction
+        if len(valid_inputs) > 1:
+            instr.append((MemoryInstructions.LoadMem, sum(map(size, valid_inputs[:-1]))))
+
+        if takes_nn_input:
+            instr.append((MemoryInstructions.LoadIn, 0))
+
+        if isinstance(self, OutputNode):
+            instr.append((MemoryInstructions.PushMem, self.get_inputs()[0].calc_output_node_size()))
+        else:
+            instr.append(self)
+
+        if max_feedback < self.calc_output_node_size():
+            max_feedback = self.calc_output_node_size()
+
+        return (instr, max_feedback)
 
 class ConstNode(Node):
     c: list[int]
@@ -452,8 +512,6 @@ class Model:
 
             n.calc_output_dimensions()
 
-            print(n, n.output_size)
-
             queue.extend(n.outputs)
 
     def get_max_in_out_size(self) -> tuple[int, int]:
@@ -489,7 +547,7 @@ class Model:
                 for c in n.outputs:
                     c.replace_input(n, p)
 
-                self.nodes.remove(n)
+                del n
 
     def generate_signals(self) -> list[tuple[str, int]]:
         res = []
@@ -508,6 +566,43 @@ class Model:
                 res.append((n.name + "_i_{}".format(i), input_node.calc_output_node_size()))
 
         return res
+
+    def calc_instruction_list(self) -> tuple[list[Node | tuple[MemoryInstructions, int]], int]:
+        # TODO: Calc max feedback, max output, max input
+        res = []
+
+        max_feedback = 0
+
+        for o in self.outputs:
+            instr, maxfb = o.calc_instruction_list_at_node()
+
+            skip_next: bool = False
+            new_instr: list[Node | tuple[MemoryInstructions, int]] = []
+            for e, en in zip(instr, instr[1:]):
+                if skip_next:
+                    skip_next = False
+                    continue
+
+                if isinstance(e, tuple) and isinstance(en, tuple):
+                    if e[0] == MemoryInstructions.PushMem and en[0] == MemoryInstructions.LoadIn:
+                        # Is push + Load In
+                        new_instr.append((MemoryInstructions.PushMemAndLoadIn, e[1]))
+                        skip_next = True
+                        continue
+                    elif e[0] == MemoryInstructions.LoadMem and en[0] == MemoryInstructions.LoadIn:
+                        # Is load memory + in
+                        new_instr.append((MemoryInstructions.LoadInAndMem, e[1]))
+                        skip_next = True
+                        continue
+
+                new_instr.append(e)
+
+            res.append(instr)
+
+            if max_feedback < maxfb:
+                max_feedback = maxfb
+
+        return (res, max_feedback)
 
     def __repr__(self) -> str:
         res = ""
