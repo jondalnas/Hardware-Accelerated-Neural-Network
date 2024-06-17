@@ -78,8 +78,8 @@ architecture Behavioral of top is
     
     signal valid_to_nn, valid_from_nn : std_logic;
     
-    signal data_to_nn : array_type(7 downto 0)(31 downto 0);
-    signal data_from_nn : array_type(7 downto 0)(31 downto 0);
+    signal data_to_nn : array_type(7 downto 0)(15 downto 0);
+    signal data_from_nn : array_type(7 downto 0)(15 downto 0);
     
     --Testing signals
     type bit_vec is array(7 downto 0) of std_logic;
@@ -177,7 +177,7 @@ begin
         generic map (
             num_in => 8,
             num_out => 8,
-            data_width => 32
+            data_width => 16
         )
         port map (
             clk => clk,
@@ -192,11 +192,7 @@ begin
         generic map (
             nn_num_in => 8,
             nn_num_out => 8,
-            data_width => 32,
-            memory_read_start => 0,
-            memory_read_end => 25343,
-            memory_write_start => 25344,
-            memory_write_end => 50687
+            data_width => 16
         )
         
         port map (

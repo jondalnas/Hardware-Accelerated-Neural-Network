@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 11.06.2024 16:02:07
+-- Create Date: 13.06.2024 18:33:22
 -- Design Name: 
--- Module Name: Defs - 
+-- Module Name: scalar_division - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -21,7 +21,6 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use work.types.all;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -32,10 +31,21 @@ use work.types.all;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-package defs is
-    constant MAX_STACK : Integer := 256;
-    constant INSTRUCTIONS : array_type(4 downto 0)(18 downto 0) := ("0000000000000010001", "0000000000000010010", "0000000000000010001", "0000000000000010010", "0000000000000010000");
-    constant INPUT_SIZE : Integer := 4;
-    constant INST_SIZE : Integer := 3;
+entity scalar_division is
+    generic (
+        scalar : std_logic_vector(15 downto 0);
+        input_size : integer;
+        output_size : integer
+    );
+    Port (
+        input : in std_logic_vector(input_size - 1 downto 0);
+        output : out std_logic_vector(output_size - 1 downto 0)
+    );
+end scalar_division;
 
-end defs;
+architecture Behavioral of scalar_division is
+
+begin
+
+
+end Behavioral;
