@@ -86,47 +86,16 @@ def get_constant(model: Model) -> str:
 
     return res
 
-def int_to_std_logic_vector(val: int, data_width: int = 16, decimal_place = 1, sign: bool = True):
-    neg = val < 0
+def int_to_std_logic_vector(val: float, data_width: int = 16, decimal_place = 1, signed: bool = True):
+    val *= 1 << (data_width - decimal_place)
 
-    start = 2
-    if neg:
-        start = 3
+    max_val = 1 << data_width if not signed else 1 << (data_width - 1)
 
-    if sign:
-        decimal_place -= 1
+    if val >= max_val:
+        return "1" * data_width if not signed else "0" + ("1" * (data_width - 1))
+    if val < -max_val:
+        return "1" + ("0" * (data_width - 1))
 
-    res = bin(int(val))[start:]
-
-    if len(res) > decimal_place:
-        res = ""
-        for _ in range(decimal_place):
-            res += "1"
-    else:
-        for _ in range(decimal_place - len(res)):
-            res = "0" + res
-
-    if sign:
-        res = "0" + res
-
-    val = val - int(val)
-
-    for _ in range(data_width - decimal_place):
-        val *= 2
-
-        if int(val) == 1:
-            res += "1"
-            val -= 1
-        else:
-            res += "0"
-
-    if sign and neg:
-        res_inv = ""
-        for c in res:
-            if c == "1":
-                res_inv += "0"
-            else:
-                res_inv += "1"
-        res = res_inv
-
-    return res
+    val = int(val)
+    res = bin(val if val > 0 or not signed else val + (1 << data_width))[2:]
+    return ("0" * (data_width - len(res))) + res
