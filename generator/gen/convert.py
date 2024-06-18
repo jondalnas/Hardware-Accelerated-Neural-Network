@@ -34,10 +34,7 @@ def get_signals(model: Model) -> str:
     START = "    signal "
 
     for sn,sw in model.generate_signals():
-        if sw > 1:
-            res += START + sn + f" : array_type({sw - 1} downto 0)(data_width-1 downto 0);\n"
-        else:
-            res += START + sn + ": std_logic_vector(data_width-1 downto 0);\n"
+        res += START + sn + f" : array_type({sw - 1} downto 0)(data_width-1 downto 0);\n"
 
     return res
 
@@ -79,6 +76,10 @@ def get_constant(model: Model) -> str:
     for c in model.constants:
         for o in c.outputs:
             res += "    " + o.name + f"_i_{o.get_input_index(c)} <= ("
+
+            if len(c.c) == 1:
+                res += "0 => \"" + int_to_std_logic_vector(c.c[0]) + "\");\n"
+                continue
 
             for val in c.c:
                 res += "\"" + int_to_std_logic_vector(val) + "\", "
