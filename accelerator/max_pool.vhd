@@ -38,7 +38,7 @@ entity max_pool is
         kernel_shape : dimensions_type(num_dimensions - 1 downto 0);
         pads : dimensions_type(2 * num_dimensions - 1 downto 0);
         strides : dimensions_type(num_dimensions- 1 downto 0);
-        in_dimensions : integer;
+        in_dimensions : dimensions_type(num_dimensions- 1 downto 0);
         input_size : integer;
         output_size : integer;
         data_width : integer

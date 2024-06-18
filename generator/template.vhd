@@ -21,8 +21,8 @@ entity nn is
 end nn;
 
 architecture Behavioral of nn is
-    signal feedback, feedback_next : array_type(num_fb-1 downto 0);
-    signal was_valid, was_valid_next : std_logic;
+    signal feedback, next_feedback : array_type(num_feedback-1 downto 0);
+    signal was_valid, next_was_valid : std_logic;
 
 -- STATES
 
@@ -33,16 +33,17 @@ begin
 -- CONSTANTS
     process(all)
     begin
-        feedback_next <= feedback;
-        state_next <= state;
+        next_feedback <= feedback;
+        next_state <= state;
+		next_was_valid <= was_valid;
         valid_out <= '0';
         output <= (others => (others => '0'));
 
         case state is
             when 0 =>
-                state_next <= 0;
+                next_state <= 0;
                 if valid_in then
-                    state_next <= 1;
+                    next_state <= 1;
                 end if;
 -- FSM
         end case;
@@ -53,12 +54,12 @@ begin
         if rising_edge(clk) then
             if rst = '1' then
                 feedback <= (others => (others => '0'));
-                state <= (others => '0');
+                state <= 0;
                 was_valid <= '0';
             else
-                feedback <= feedback_next;
-                state <= state_next;
-                was_valid <= was_valid_next;
+                feedback <= next_feedback;
+                state <= next_state;
+                was_valid <= next_was_valid;
             end if;
         end if;
     end process;

@@ -91,25 +91,25 @@ class Node:
         curr_sum_size = 0
         for index, input_node in inputs[:-1]:
             curr_size = input_node.calc_output_node_size()
-            res += "                " + self.name + f"_i_{index} <= input({curr_sum_size + curr_size - 1} downto {curr_sum_size})\n"
+            res += "                " + self.name + f"_i_{index} <= input({curr_sum_size + curr_size - 1} downto {curr_sum_size});\n"
             curr_sum_size += curr_size
 
             should_handshake = True
 
         if isinstance(inputs[-1][1], InputNode):
             curr_size = inputs[-1][1].calc_output_node_size()
-            res += "                " + self.name + f"_i_{len(inputs)-1} <= input({curr_sum_size + curr_size - 1} downto {curr_sum_size})\n"
+            res += "                " + self.name + f"_i_{len(inputs)-1} <= input({curr_sum_size + curr_size - 1} downto {curr_sum_size});\n"
 
             should_handshake = True
         else:
             curr_size = inputs[-1][1].calc_output_node_size()
-            res += "                " + self.name + f"_i_{len(inputs)-1} <= feedback({curr_size - 1} downto 0)\n"
+            res += "                " + self.name + f"_i_{len(inputs)-1} <= feedback({curr_size - 1} downto 0);\n"
 
         if self.is_feedback:
-            res += f"                next_feedback({self.calc_output_node_size() - 1} downto 0) <= " + self.name + "_o\n"
+            res += f"                next_feedback({self.calc_output_node_size() - 1} downto 0) <= " + self.name + "_o;\n"
             return (res, should_handshake)
         else:
-            res += f"                output({self.calc_output_node_size() - 1} downto 0) <= " + self.name + "_o\n"
+            res += f"                output({self.calc_output_node_size() - 1} downto 0) <= " + self.name + "_o;\n"
             return (res, True)
 
     def calc_instruction_list_at_node(self) -> list[Node | tuple[MemoryInstructions, int]]:
@@ -150,6 +150,9 @@ class Node:
             instr.append(self)
 
         return instr
+
+    def to_vhdl_entity(self, _: int) -> str:
+        return "Error: Entity not implemented"
 
 class ConstNode(Node):
     c: list[int]
@@ -224,18 +227,36 @@ class DivNode(Node):
     def __str__(self):
         return "Div"
 
+    def to_vhdl_entity(self, data_width: int) -> str:
+        return ( "    " + self.name + " : entity work.div\n"
+                 "        generic map (\n"
+                f"            input_size => {self.calc_output_node_size()},\n"
+                f"            data_width => {data_width}\n"
+                 "        )\n"
+                 "        port map (\n"
+                 "            a => " + self.name + "_i_0,\n"
+                 "            b => " + self.name + "_i_1,\n"
+                 "            c => " + self.name + "_o\n"
+                 "        );\n")
+
 class ConvNode(Node):
     x: Node
+    x_dimensions: list[int]
     w: Node
+    w_dimensions: list[int]
     input_names: list[str]
 
     kernel_shape: list[int]
+    dilation: list[int]
+    stride: list[int]
 
-    def __init__(self, name: str, input_names: list[str], kernel_shape: list[int]):
+    def __init__(self, name: str, input_names: list[str], kernel_shape: list[int], dilation: list[int], stride: list[int]):
         super().__init__(name)
         self.input_names = input_names
 
         self.kernel_shape = kernel_shape
+        self.dilation = dilation
+        self.stride = stride
 
     def add_input(self, name: str, n: Node):
         if name == self.input_names[0]:
@@ -256,12 +277,39 @@ class ConvNode(Node):
         if self.x.output_size[1] != self.w.output_size[1]:
             raise Exception("Wrong channel dimension")
 
+        self.x_dimensions = self.x.output_size
+        self.w_dimensions = self.w.output_size
+
         self.output_size = [1] # Probably wrong, should probably be calculated from channels of the weight and x
         self.output_size.append(self.w.output_size[0])
         self.output_size.extend(self.x.output_size[2:])
 
     def __str__(self):
         return "Conv"
+
+    def to_vhdl_entity(self, data_width: int) -> str:
+        num_dimensions = len(self.output_size) - 2
+        x_size = self.x.calc_output_node_size()
+        w_size = self.w.calc_output_node_size()
+
+        return ( "    " + self.name + " : entity work.conv\n"
+                 "        generic map (\n"
+                f"            num_dimensions => {num_dimensions},\n"
+                f"            dimensions_x => {list_to_vhdl(self.x_dimensions)},\n"
+                f"            x_size => {x_size},\n"
+                f"            dimensions_w => {list_to_vhdl(self.w_dimensions)},\n"
+                f"            w_size => {w_size},\n"
+                f"            kernel_shape => {list_to_vhdl(self.kernel_shape)},\n"
+                f"            dilation => {list_to_vhdl(self.dilation)},\n"
+                f"            stride => {list_to_vhdl(self.stride)},\n"
+                f"            data_width => {data_width},\n"
+                f"            y_size => {self.calc_output_node_size()}\n"
+                 "        )\n"
+                 "        port map (\n"
+                 "            x => " + self.name + "_i_0,\n"
+                 "            w => " + self.name + "_i_1,\n"
+                 "            y => " + self.name + "_o\n"
+                 "        );\n")
 
 class AddNode(Node):
     a: Node
@@ -319,6 +367,18 @@ class AddNode(Node):
     def __str__(self):
         return "Add"
 
+    def to_vhdl_entity(self, data_width: int):
+        return ( "    " + self.name + " : entity work.add\n"
+                 "        generic map (\n"
+                f"            input_size => {self.calc_output_node_size()},\n"
+                f"            data_width => {data_width}\n"
+                 "        )\n"
+                 "        port map (\n"
+                 "            a => " + self.name + "_i_0,\n"
+                 "            b => " + self.name + "_i_1,\n"
+                 "            c => " + self.name + "_o\n"
+                 "        );\n")
+
 class ReluNode(Node):
     x: Node
 
@@ -337,8 +397,20 @@ class ReluNode(Node):
     def __str__(self):
         return "Relu"
 
+    def to_vhdl_entity(self, data_width: int) -> str:
+        return ( "    " + self.name + " : entity work.relu\n"
+                 "        generic map (\n"
+                f"            input_size => {self.calc_output_node_size()},\n"
+                f"            data_width => {data_width}\n"
+                 "        )\n"
+                 "        port map (\n"
+                 "            x => " + self.name + "_i_0,\n"
+                 "            y => " + self.name + "_o\n"
+                 "        );\n")
+
 class MaxPoolNode(Node):
     x: Node
+    x_dimensions: list[int]
 
     kernel_shape: list[int]
     pads: list[int]
@@ -361,6 +433,7 @@ class MaxPoolNode(Node):
         self.x = new
 
     def calc_output_dimensions(self):
+        self.x_dimensions = self.x.output_size
         dims = self.x.output_size[:2]
 
         for d,k,pb,pe,s in zip(self.x.output_size[2:], self.kernel_shape, self.pads[0:len(self.pads)//2], self.pads[len(self.pads)//2:], self.strides):
@@ -371,6 +444,27 @@ class MaxPoolNode(Node):
 
     def __str__(self):
         return "MaxPool"
+
+    def to_vhdl_entity(self, data_width: int) -> str:
+        num_dimensions = len(self.output_size) - 2
+        input_size = self.x.calc_output_node_size()
+        output_size = self.calc_output_node_size()
+
+        return ( "    " + self.name + " : entity work.max_pool\n"
+                 "        generic map (\n"
+                f"            num_dimensions => {num_dimensions},\n"
+                f"            kernel_shape => {list_to_vhdl(self.kernel_shape)},\n"
+                f"            pads => {list_to_vhdl(self.pads)},\n"
+                f"            strides => {list_to_vhdl(self.strides)},\n"
+                f"            in_dimensions => {list_to_vhdl(self.x_dimensions)},\n"
+                f"            input_size => {input_size},\n"
+                f"            output_size => {output_size},\n"
+                f"            data_width => {data_width}\n"
+                 "        )\n"
+                 "        port map (\n"
+                 "            x => " + self.name + "_i_0,\n"
+                 "            y => " + self.name + "_o\n"
+                 "        );\n")
 
 class ReshapeNode(Node):
     data: Node
@@ -398,7 +492,9 @@ class ReshapeNode(Node):
 
 class MatMulNode(Node):
     a: Node
+    a_dimensions: list[int]
     b: Node
+    b_dimensions: list[int]
     input_names: list[str]
 
     def __init__(self, name: str, input_names: list[str]):
@@ -416,6 +512,9 @@ class MatMulNode(Node):
         return [self.a, self.b]
 
     def calc_output_dimensions(self):
+        self.a_dimensions = self.a.output_size
+        self.b_dimensions = self.b.output_size
+
         if self.a.output_size[-1] != self.b.output_size[-2]:
             raise Exception("Lower dimensions of tensor incompatible")
 
@@ -442,6 +541,28 @@ class MatMulNode(Node):
 
     def __str__(self):
         return "MatMul"
+
+    def to_vhdl_entity(self, data_width: int) -> str:
+        num_dimensions = len(self.output_size) - 2
+        a_size = self.a.calc_output_node_size()
+        b_size = self.b.calc_output_node_size()
+        y_size = self.calc_output_node_size()
+
+        return ( "    " + self.name + " : entity work.mat_mul\n"
+                 "        generic map (\n"
+                f"            num_dimensions => {num_dimensions},\n"
+                f"            a_dim => {list_to_vhdl(self.a_dimensions)},\n"
+                f"            b_dim => {list_to_vhdl(self.b_dimensions)},\n"
+                f"            a_size => {a_size},\n"
+                f"            b_size => {b_size},\n"
+                f"            y_size => {y_size},\n"
+                f"            data_width => {data_width}\n"
+                 "        )\n"
+                 "        port map (\n"
+                 "            a => " + self.name + "_i_0,\n"
+                 "            b => " + self.name + "_i_1,\n"
+                 "            y => " + self.name + "_o\n"
+                 "        );\n")
 
 class InputNode(Node):
     def __init__(self, name: str, dimensions: list[int]):
@@ -607,17 +728,14 @@ class Model:
         res = []
 
         for n in self.nodes:
-            if isinstance(n, (ConstNode, InputNode)):
+            if isinstance(n, (ConstNode, InputNode, ReshapeNode)):
                 continue
 
             if len(n.outputs) != 0:
                 res.append((n.name + "_o", n.calc_output_node_size()))
 
             for i,input_node in enumerate(n.get_inputs()):
-                if isinstance(input_node, (ConstNode)):
-                    continue
-
-                res.append((n.name + "_i_{}".format(i), input_node.calc_output_node_size()))
+                res.append((n.name + f"_i_{i}", input_node.calc_output_node_size()))
 
         return res
 
@@ -732,7 +850,7 @@ def convert_op_type(n: onnx.NodeProto) -> Node:
             return DivNode(n.name, n.input, int(find_attribute(n.attribute, "broadcast").i))
 
         case "Conv":
-            return ConvNode(n.name, n.input, list(find_attribute(n.attribute, "kernel_shape").ints))
+            return ConvNode(n.name, n.input, list(find_attribute(n.attribute, "kernel_shape").ints), list(find_attribute(n.attribute, "dilations").ints), list(find_attribute(n.attribute, "strides").ints))
 
         case "Relu":
             return ReluNode(n.name)
@@ -791,3 +909,12 @@ def has_all_output_sizes(node: Node):
             return False
 
     return True
+
+def list_to_vhdl(l: list[int]) -> str:
+    res = "("
+
+    for e in l:
+        res += str(e)
+        res += ", "
+
+    return res[:-2] + ")"

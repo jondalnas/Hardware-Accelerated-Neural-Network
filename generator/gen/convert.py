@@ -18,7 +18,7 @@ def convert_model(model: Model) -> str:
             elif l.startswith("-- FSM"):
                 res += get_fsm(params)
             elif l.startswith("-- ENTITIES"):
-                res += get_entities(model)
+                res += get_entities(params)
             elif l.startswith("-- CONSTANT"):
                 res += get_constant(model)
             else:
@@ -27,14 +27,17 @@ def convert_model(model: Model) -> str:
     return res
 
 def get_states(params: ModelParams) -> str:
-    return f"    constant num_states : positive := {len(params.operations)};\n    signal state, next_state : std_logic_vector({int(log2(len(params.operations) + 1) - 1)} downto 0);\n"
+    return f"    constant num_states : positive := {len(params.operations)};\n    signal state, next_state : integer;\n"
 
 def get_signals(model: Model) -> str:
     res = ""
-    START = "    signals "
+    START = "    signal "
 
     for sn,sw in model.generate_signals():
-        res += START + sn + f" : array_type({sw} downto 0)(data_width-1 downto 0);\n"
+        if sw > 1:
+            res += START + sn + f" : array_type({sw - 1} downto 0)(data_width-1 downto 0);\n"
+        else:
+            res += START + sn + ": std_logic_vector(data_width-1 downto 0);\n"
 
     return res
 
@@ -44,7 +47,7 @@ def get_fsm(params: ModelParams) -> str:
     for i, n in enumerate(params.operations):
         connection, should_handshake = n.generate_connections()
 
-        res += f"            when {i+1}:\n"
+        res += f"            when {i+1} =>\n"
         res += connection
         if not should_handshake or i == 0:
             res += "                next_state <= state + 1;\n"
@@ -53,7 +56,7 @@ def get_fsm(params: ModelParams) -> str:
             res += "                    valid_out <= '0';\n"
             res += "                    was_valid <= '1';\n"
             res += "                elsif was_valid then\n"
-            res += "                    was_valid <= '0'\n"
+            res += "                    was_valid <= '0';\n"
             if i == len(params.operations):
                 res += "                    next_state <= state + 1;\n"
             else:
@@ -62,11 +65,11 @@ def get_fsm(params: ModelParams) -> str:
 
     return res
 
-def get_entities(model: Model) -> str:
+def get_entities(params: ModelParams) -> str:
     res = ""
 
-    for n in model.nodes:
-        res += ""# n.to_vhdl_entity()
+    for n in params.operations:
+        res += n.to_vhdl_entity(16)
 
     return res
 
