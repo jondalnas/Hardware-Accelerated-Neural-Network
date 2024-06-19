@@ -25,4 +25,6 @@ if __name__ == "__main__":
     #  print()
     #  print("List of all signals:", m.generate_signals())
     #  print()
-    print(convert_model(m))
+    nn, defs = convert_model(m)
+    print(nn)
+    print(defs)

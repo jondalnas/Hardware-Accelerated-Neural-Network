@@ -60,6 +60,9 @@ class Node:
     def get_inputs(self) -> list[Node]:
         return []
 
+    def get_intput_broadcasts(self) -> list[tuple[int, int, int]]:
+        return []
+
     def get_input_index(self, node: Node) -> int:
         for index, input_node in enumerate(self.get_inputs()):
             if input_node == node:
@@ -108,9 +111,9 @@ class Node:
         if self.is_feedback:
             res += f"                next_feedback({self.calc_output_node_size() - 1} downto 0) <= " + self.name + "_o;\n"
             return (res, should_handshake)
-        else:
-            res += f"                output({self.calc_output_node_size() - 1} downto 0) <= " + self.name + "_o;\n"
-            return (res, True)
+
+        res += f"                output({self.calc_output_node_size() - 1} downto 0) <= " + self.name + "_o;\n"
+        return (res, True)
 
     def calc_instruction_list_at_node(self) -> list[Node | tuple[MemoryInstructions, int]]:
         instr: list[Node | tuple[MemoryInstructions, int]] = []
@@ -178,6 +181,8 @@ class DivNode(Node):
 
     broadcast_axis: int
 
+    is_broadcasting: bool = False
+
     def __init__(self, name: str, input_names: list[str], broadcast_axis: int):
         super().__init__(name)
         self.input_names = input_names
@@ -192,6 +197,11 @@ class DivNode(Node):
     def get_inputs(self) -> list[Node]:
         return [self.a, self.b]
 
+    def get_intput_broadcasts(self) -> list[tuple[int, int, int]]:
+        if self.is_broadcasting:
+            return [(1, self.b.calc_output_node_size(), self.calc_output_node_size())]
+        return []
+
     def replace_input(self, original: Node, new: Node):
         if self.a == original:
             self.a = new
@@ -203,6 +213,8 @@ class DivNode(Node):
             self.output_size = self.a.output_size
 
             return
+
+        self.is_broadcasting = True
 
         # B is only allowed to be broadcast to A, not the other way around
         # Check if B is a scalar tensor
@@ -228,6 +240,8 @@ class DivNode(Node):
         return "Div"
 
     def to_vhdl_entity(self, data_width: int) -> str:
+        bc = "_bc" if self.is_broadcasting else ""
+
         return ( "    " + self.name + " : entity work.div\n"
                  "        generic map (\n"
                 f"            input_size => {self.calc_output_node_size()},\n"
@@ -235,7 +249,7 @@ class DivNode(Node):
                  "        )\n"
                  "        port map (\n"
                  "            a => " + self.name + "_i_0,\n"
-                 "            b => " + self.name + "_i_1,\n"
+                 "            b => " + self.name + bc + "_i_1,\n"
                  "            c => " + self.name + "_o\n"
                  "        );\n")
 
@@ -267,6 +281,16 @@ class ConvNode(Node):
     def get_inputs(self) -> list[Node]:
         return [self.x, self.w]
 
+    def get_intput_broadcasts(self) -> list[tuple[int, int, int]]:
+        if self.kernel_shape == self.w_dimensions:
+            return []
+
+        kernel_size = 1
+        for k in self.kernel_shape:
+            kernel_size *= k
+
+        return [(1, self.w.calc_output_node_size(), kernel_size)]
+
     def replace_input(self, original: Node, new: Node):
         if self.x == original:
             self.x = new
@@ -291,6 +315,7 @@ class ConvNode(Node):
         num_dimensions = len(self.output_size) - 2
         x_size = self.x.calc_output_node_size()
         w_size = self.w.calc_output_node_size()
+        bc = "_bc" if self.kernel_shape != self.w_dimensions else ""
 
         return ( "    " + self.name + " : entity work.conv\n"
                  "        generic map (\n"
@@ -307,7 +332,7 @@ class ConvNode(Node):
                  "        )\n"
                  "        port map (\n"
                  "            x => " + self.name + "_i_0,\n"
-                 "            w => " + self.name + "_i_1,\n"
+                 "            w => " + self.name + bc + "_i_1,\n"
                  "            y => " + self.name + "_o\n"
                  "        );\n")
 
@@ -317,6 +342,8 @@ class AddNode(Node):
     input_names: list[str]
 
     broadcast_axis: int
+
+    is_broadcasting: bool = False
 
     def __init__(self, name: str, input_names: list[str], broadcast_axis: int):
         super().__init__(name)
@@ -332,6 +359,11 @@ class AddNode(Node):
     def get_inputs(self) -> list[Node]:
         return [self.a, self.b]
 
+    def get_intput_broadcasts(self) -> list[tuple[int, int, int]]:
+        if self.is_broadcasting:
+            return [(1, self.b.calc_output_node_size(), self.calc_output_node_size())]
+        return []
+
     def replace_input(self, original: Node, new: Node):
         if self.a == original:
             self.a = new
@@ -343,6 +375,8 @@ class AddNode(Node):
             self.output_size = self.a.output_size
 
             return
+
+        self.is_broadcasting = True
 
         # B is only allowed to be broadcast to A, not the other way around
         # Check if B is a scalar tensor
@@ -368,6 +402,8 @@ class AddNode(Node):
         return "Add"
 
     def to_vhdl_entity(self, data_width: int):
+        bc = "_bc" if self.is_broadcasting else ""
+
         return ( "    " + self.name + " : entity work.add\n"
                  "        generic map (\n"
                 f"            input_size => {self.calc_output_node_size()},\n"
@@ -375,7 +411,7 @@ class AddNode(Node):
                  "        )\n"
                  "        port map (\n"
                  "            a => " + self.name + "_i_0,\n"
-                 "            b => " + self.name + "_i_1,\n"
+                 "            b => " + self.name + bc + "_i_1,\n"
                  "            c => " + self.name + "_o\n"
                  "        );\n")
 
@@ -497,6 +533,8 @@ class MatMulNode(Node):
     b_dimensions: list[int]
     input_names: list[str]
 
+    broadcasting: int = -1
+
     def __init__(self, name: str, input_names: list[str]):
         super().__init__(name)
 
@@ -511,25 +549,44 @@ class MatMulNode(Node):
     def get_inputs(self):
         return [self.a, self.b]
 
+    def get_intput_broadcasts(self) -> list[tuple[int, int, int]]:
+        if self.broadcasting == 0:
+            return [(0, self.a.calc_output_node_size(), self.calc_output_node_size())]
+
+        if self.broadcasting == 1:
+            return [(1, self.b.calc_output_node_size(), self.calc_output_node_size())]
+
+        return []
+
     def calc_output_dimensions(self):
         self.a_dimensions = self.a.output_size
         self.b_dimensions = self.b.output_size
 
-        if self.a.output_size[-1] != self.b.output_size[-2]:
+        if len(self.a_dimensions) == 1:
+            self.a_dimensions = [1] + self.a_dimensions
+
+        if len(self.b_dimensions) == 1:
+            self.b_dimensions.append(1)
+
+        if self.a_dimensions[-1] != self.b_dimensions[-2]:
             raise Exception("Lower dimensions of tensor incompatible")
 
-        dims = [self.a.output_size[-2], self.b.output_size[-1]]
+        dims = [self.a_dimensions[-2], self.b_dimensions[-1]]
 
-        if len(self.a.output_size) > len(self.b.output_size):
-            for e1,e2 in zip(self.a.output_size[len(self.a.output_size)-len(self.b.output_size):-2], self.b.output_size[:-2]):
+        if len(self.a_dimensions) > len(self.b_dimensions):
+            for e1,e2 in zip(self.a_dimensions[len(self.a_dimensions)-len(self.b_dimensions):-2], self.b_dimensions[:-2]):
                 if e1 != e2:
                     raise Exception("Upper dimensions of tensor incompatible")
-            dims = self.a.output_size[:-2] + dims
-        elif len(self.a.output_size) < len(self.b.output_size):
-            for e1,e2 in zip(self.a.output_size[:-2], self.b.output_size[len(self.a.output_size)-len(self.b.output_size):-2]):
+            dims = self.a_dimensions[:-2] + dims
+            self.broadcasting = 1
+        elif len(self.a_dimensions) < len(self.b_dimensions):
+            for e1,e2 in zip(self.a_dimensions[:-2], self.b_dimensions[len(self.a_dimensions)-len(self.b_dimensions):-2]):
                 if e1 != e2:
                     raise Exception("Upper dimensions of tensor incompatible")
-            dims = self.b.output_size[:-2] + dims
+            dims = self.b_dimensions[:-2] + dims
+            self.broadcasting = 0
+        else:
+            dims = self.a_dimensions[:-2] + dims
 
         self.output_size = dims
 
@@ -547,6 +604,8 @@ class MatMulNode(Node):
         a_size = self.a.calc_output_node_size()
         b_size = self.b.calc_output_node_size()
         y_size = self.calc_output_node_size()
+        bca = "_bc" if self.broadcasting == 0 else ""
+        bcb = "_bc" if self.broadcasting == 1 else ""
 
         return ( "    " + self.name + " : entity work.mat_mul\n"
                  "        generic map (\n"
@@ -559,8 +618,8 @@ class MatMulNode(Node):
                 f"            data_width => {data_width}\n"
                  "        )\n"
                  "        port map (\n"
-                 "            a => " + self.name + "_i_0,\n"
-                 "            b => " + self.name + "_i_1,\n"
+                 "            a => " + self.name + bca + "_i_0,\n"
+                 "            b => " + self.name + bcb + "_i_1,\n"
                  "            y => " + self.name + "_o\n"
                  "        );\n")
 
@@ -592,9 +651,11 @@ class OutputNode(Node):
 class ModelParams:
     instructions: list[Node | tuple[MemoryInstructions, int]]
     operations: list[Node]
+    mem_instructions: list[tuple[MemoryInstructions, int]]
     max_feedback: int
     max_output: int
     max_input: int
+    nn_input_size: int
 
 class Model:
     nodes: list[Node] = []
@@ -736,6 +797,9 @@ class Model:
 
             for i,input_node in enumerate(n.get_inputs()):
                 res.append((n.name + f"_i_{i}", input_node.calc_output_node_size()))
+                
+            for index, _, size in n.get_intput_broadcasts():
+                res.append((n.name + f"_bc_i_{index}", size))
 
         return res
 
@@ -752,6 +816,7 @@ class Model:
         max_input = input_nn_size
 
         operators = []
+        mem_instr = []
 
         for o in self.outputs:
             max_output = max(o.calc_input_node_size(input_nn_size), max_output)
@@ -767,6 +832,8 @@ class Model:
                     continue
 
                 if isinstance(e, tuple):
+                    mem_instr.append(e)
+
                     if isinstance(en, tuple):
                         if e[0] == MemoryInstructions.PushMem and en[0] == MemoryInstructions.LoadIn:
                             # Is push + Load In
@@ -802,7 +869,10 @@ class Model:
 
             res.extend(new_instr)
 
-        return ModelParams(res, operators, max_feedback, max_output, max_input)
+        if isinstance(instr[-1], tuple):
+            mem_instr.append(instr[-1])
+
+        return ModelParams(res, operators, mem_instr, max_feedback, max_output, max_input, input_nn_size)
 
     def __repr__(self) -> str:
         res = ""

@@ -4,40 +4,47 @@ from math import log2
 
 from .loader import Model, ModelParams
 
-def convert_model(model: Model) -> str:
-    res = ""
+def convert_model(model: Model) -> tuple[str, str]:
+    nn = ""
+    defs = ""
 
     params = model.calc_model_params()
 
-    with open("template.vhd", 'r', encoding="utf-8") as f:
+    with open("nn_template.vhd", 'r', encoding="utf-8") as f:
         for l in f:
             if l.startswith("-- STATES"):
-                res += get_states(params)
+                nn += get_states(params)
             elif l.startswith("-- SIGNALS"):
-                res += get_signals(model)
+                nn += get_signals(model)
             elif l.startswith("-- FSM"):
-                res += get_fsm(params)
+                nn += get_fsm(params)
             elif l.startswith("-- ENTITIES"):
-                res += get_entities(params)
+                nn += get_entities(params)
             elif l.startswith("-- CONSTANT"):
-                res += get_constant(model)
+                nn += get_constant(model)
             else:
-                res += l
+                nn += l
 
-    return res
+    with open("defs_template.vhd", 'r', encoding="utf-8") as f:
+        for l in f:
+            if l.startswith("-- INSTRUCTIONS"):
+                defs += get_instructions(params)
+            elif l.startswith("-- INPUT SIZE"):
+                defs += get_input_size(params)
+            else:
+                defs += l
+
+    return (nn, defs)
 
 def get_states(params: ModelParams) -> str:
-    return f"    constant num_states : positive := {len(params.operations)};\n    signal state, next_state : integer;\n"
+    return "    signal state, next_state : integer;\n"
 
 def get_signals(model: Model) -> str:
     res = ""
     START = "    signal "
 
     for sn,sw in model.generate_signals():
-        if sw > 1:
-            res += START + sn + f" : array_type({sw - 1} downto 0)(data_width-1 downto 0);\n"
-        else:
-            res += START + sn + ": std_logic_vector(data_width-1 downto 0);\n"
+        res += START + sn + f" : array_type({sw - 1} downto 0)(data_width-1 downto 0);\n"
 
     return res
 
@@ -68,8 +75,22 @@ def get_fsm(params: ModelParams) -> str:
 def get_entities(params: ModelParams) -> str:
     res = ""
 
+    BROADCAST = ("    {}_bc : entity work.broad\n"
+                 "        generic map(\n"
+                 "            input_size => {},\n"
+                 "            output_size => {},\n"
+                 "            data_width => {}\n"
+                 "        )\n"
+                 "        port map(\n"
+                 "            input => {},\n"
+                 "            output => {}\n"
+                 "        );\n")
+
     for n in params.operations:
         res += n.to_vhdl_entity(16)
+
+        for index, input_size, output_size in n.get_intput_broadcasts():
+            res += BROADCAST.format(n.name + "_" + str(index), input_size, output_size, 16, n.name + f"_i_{index}", n.name + f"_bc_i_{index}")
 
     return res
 
@@ -80,6 +101,10 @@ def get_constant(model: Model) -> str:
         for o in c.outputs:
             res += "    " + o.name + f"_i_{o.get_input_index(c)} <= ("
 
+            if len(c.c) == 1:
+                res += "0 => \"" + int_to_std_logic_vector(c.c[0]) + "\");\n"
+                continue
+
             for val in c.c:
                 res += "\"" + int_to_std_logic_vector(val) + "\", "
 
@@ -88,6 +113,20 @@ def get_constant(model: Model) -> str:
             res += ");\n"
 
     return res
+
+def get_instructions(params: ModelParams) -> str:
+    res = f"    constant INSTRUCTIONS : array_type({len(params.mem_instructions) - 1} downto 0)(18 downto 0) := ("
+
+    for mi, num in reversed(params.mem_instructions):
+        print(mi.value, num)
+        res += "\"" + int_to_std_logic_vector(mi.value[0] + (num << 3), decimal_place=16, signed=False) + "\", "
+
+    res = res[:-2] + ");\n"
+
+    return res
+
+def get_input_size(param: ModelParams) -> str:
+    return f"    constant INPUT_SIZE : Integer := {param.nn_input_size};\n"
 
 def int_to_std_logic_vector(val: float, data_width: int = 16, decimal_place = 1, signed: bool = True):
     val *= 1 << (data_width - decimal_place)
