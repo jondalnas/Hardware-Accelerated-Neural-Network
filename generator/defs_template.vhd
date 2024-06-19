@@ -5,5 +5,8 @@ use work.types.all;
 package defs is
 -- INSTRUCTIONS
 -- INPUT SIZE
+	constant DATA_WIDTH : Integer := 16;
+	constant INTEGER_WIDTH : Integer := 1;
+	constant DECIMAL_WIDTH : Integer := DATA_WIDTH - INTEGER_WIDTH;
     constant INST_SIZE : Integer := 3;
 end defs;
