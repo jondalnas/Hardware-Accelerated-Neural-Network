@@ -7,7 +7,7 @@ The hardware accelerator consists of 3 main parts
 
 The structure of hardware accelerator is shown in the image below
 
-![Block diagram of the hardware accelerator](Hardware-Accelerator-diagram.svg)
+![Block diagram of the hardware accelerator](Diagrams/Hardware-Accelerator-diagram.svg)
 
 ## Neural Network
 
@@ -28,7 +28,7 @@ The memory FSM is responsible for sending data to the neural network, and store 
 
 The state diagram of the memory FSM is shown in the image below
 
-![The state diagram of the memory FSM](Memory-FSM-state-diagram.svg)
+![The state diagram of the memory FSM](Diagrams/Memory-FSM-state-diagram.svg)
 
 The memory FSM also sends the current instruction to the neural net, to be able to select between wether the input to the neural net should be from the input section of the memory, from the stack section of the memory or if it should be the output of the previous layer.
 
