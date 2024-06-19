@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 17.06.2024 15:39:09
+-- Create Date: 19.06.2024 12:50:32
 -- Design Name: 
--- Module Name: relu - Behavioral
+-- Module Name: fix_mul - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -21,7 +21,6 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use work.types.all;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -32,23 +31,20 @@ use work.types.all;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity relu is
+entity fix_mul is
     generic (
-        input_size : integer;
         data_width : integer
     );
-    Port ( 
-        x : in array_type(input_size - 1 downto 0)(data_width - 1 downto 0);
-        y : out array_type(input_size - 1 downto 0)(data_width - 1 downto 0)
-    );
-end relu;
+    Port (
+        a : in std_logic_vector(data_width - 1 downto 0);
+        b : in std_logic_vector(data_width - 1 downto 0);
+        res : out std_logic_vector(data_width - 1 downto 0)
+     );
+end fix_mul;
 
-architecture Behavioral of relu is
+architecture Behavioral of fix_mul is
 
 begin
-    
-    relu_gen : for i in 0 to input_size - 1 generate
-        y(i) <= x(i) when x(i)(data_width - 1) = '0' else (others => '0');
-    end generate;
+
 
 end Behavioral;
