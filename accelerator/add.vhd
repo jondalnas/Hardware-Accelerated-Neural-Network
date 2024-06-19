@@ -48,7 +48,7 @@ architecture Behavioral of add is
 
 begin
     add_gen : for i in 0 to input_size - 1 generate
-        c(i) <= a(i) + b(i);
+        c(i) <= std_logic_vector(signed(a(i)) + signed(b(i)));
     end generate;
 
 end Behavioral;
