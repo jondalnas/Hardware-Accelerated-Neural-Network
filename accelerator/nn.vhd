@@ -24,18 +24,20 @@ architecture Behavioral of nn is
     signal feedback, next_feedback : array_type(num_feedback-1 downto 0);
     signal was_valid, next_was_valid : std_logic;
 
-    constant num_states : positive := 11;
     signal state, next_state : integer;
 
     signal Block386_o : array_type(783 downto 0)(data_width-1 downto 0);
     signal Block386_i_0 : array_type(783 downto 0)(data_width-1 downto 0);
     signal Block386_i_1 : array_type(0 downto 0)(data_width-1 downto 0);
+    signal Block386_bc_i_1 : array_type(783 downto 0)(data_width-1 downto 0);
     signal Convolution28_o : array_type(6271 downto 0)(data_width-1 downto 0);
     signal Convolution28_i_0 : array_type(783 downto 0)(data_width-1 downto 0);
     signal Convolution28_i_1 : array_type(199 downto 0)(data_width-1 downto 0);
+    signal Convolution28_bc_i_1 : array_type(24 downto 0)(data_width-1 downto 0);
     signal Plus30_o : array_type(6271 downto 0)(data_width-1 downto 0);
     signal Plus30_i_0 : array_type(6271 downto 0)(data_width-1 downto 0);
     signal Plus30_i_1 : array_type(7 downto 0)(data_width-1 downto 0);
+    signal Plus30_bc_i_1 : array_type(6271 downto 0)(data_width-1 downto 0);
     signal ReLU32_o : array_type(6271 downto 0)(data_width-1 downto 0);
     signal ReLU32_i_0 : array_type(6271 downto 0)(data_width-1 downto 0);
     signal Pooling66_o : array_type(1567 downto 0)(data_width-1 downto 0);
@@ -43,9 +45,11 @@ architecture Behavioral of nn is
     signal Convolution110_o : array_type(3135 downto 0)(data_width-1 downto 0);
     signal Convolution110_i_0 : array_type(1567 downto 0)(data_width-1 downto 0);
     signal Convolution110_i_1 : array_type(3199 downto 0)(data_width-1 downto 0);
+    signal Convolution110_bc_i_1 : array_type(24 downto 0)(data_width-1 downto 0);
     signal Plus112_o : array_type(3135 downto 0)(data_width-1 downto 0);
     signal Plus112_i_0 : array_type(3135 downto 0)(data_width-1 downto 0);
     signal Plus112_i_1 : array_type(15 downto 0)(data_width-1 downto 0);
+    signal Plus112_bc_i_1 : array_type(3135 downto 0)(data_width-1 downto 0);
     signal ReLU114_o : array_type(3135 downto 0)(data_width-1 downto 0);
     signal ReLU114_i_0 : array_type(3135 downto 0)(data_width-1 downto 0);
     signal Pooling160_o : array_type(255 downto 0)(data_width-1 downto 0);
@@ -64,8 +68,18 @@ begin
         )
         port map (
             a => Block386_i_0,
-            b => Block386_i_1,
+            b => Block386_bc_i_1,
             c => Block386_o
+        );
+    Block386_1_bc : entity work.broad
+        generic map(
+            input_size => 1,
+            output_size => 784,
+            data_width => 16
+        )
+        port map(
+            input => Block386_i_1,
+            output => Block386_bc_i_1
         );
     Convolution28 : entity work.conv
         generic map (
@@ -82,8 +96,18 @@ begin
         )
         port map (
             x => Convolution28_i_0,
-            w => Convolution28_i_1,
+            w => Convolution28_bc_i_1,
             y => Convolution28_o
+        );
+    Convolution28_1_bc : entity work.broad
+        generic map(
+            input_size => 200,
+            output_size => 25,
+            data_width => 16
+        )
+        port map(
+            input => Convolution28_i_1,
+            output => Convolution28_bc_i_1
         );
     Plus30 : entity work.add
         generic map (
@@ -92,8 +116,18 @@ begin
         )
         port map (
             a => Plus30_i_0,
-            b => Plus30_i_1,
+            b => Plus30_bc_i_1,
             c => Plus30_o
+        );
+    Plus30_1_bc : entity work.broad
+        generic map(
+            input_size => 8,
+            output_size => 6272,
+            data_width => 16
+        )
+        port map(
+            input => Plus30_i_1,
+            output => Plus30_bc_i_1
         );
     ReLU32 : entity work.relu
         generic map (
@@ -134,8 +168,18 @@ begin
         )
         port map (
             x => Convolution110_i_0,
-            w => Convolution110_i_1,
+            w => Convolution110_bc_i_1,
             y => Convolution110_o
+        );
+    Convolution110_1_bc : entity work.broad
+        generic map(
+            input_size => 3200,
+            output_size => 25,
+            data_width => 16
+        )
+        port map(
+            input => Convolution110_i_1,
+            output => Convolution110_bc_i_1
         );
     Plus112 : entity work.add
         generic map (
@@ -144,8 +188,18 @@ begin
         )
         port map (
             a => Plus112_i_0,
-            b => Plus112_i_1,
+            b => Plus112_bc_i_1,
             c => Plus112_o
+        );
+    Plus112_1_bc : entity work.broad
+        generic map(
+            input_size => 16,
+            output_size => 3136,
+            data_width => 16
+        )
+        port map(
+            input => Plus112_i_1,
+            output => Plus112_bc_i_1
         );
     ReLU114 : entity work.relu
         generic map (
@@ -208,7 +262,7 @@ begin
     begin
         next_feedback <= feedback;
         next_state <= state;
-		next_was_valid <= was_valid;
+        next_was_valid <= was_valid;
         valid_out <= '0';
         output <= (others => (others => '0'));
 

@@ -35,7 +35,7 @@ begin
     begin
         next_feedback <= feedback;
         next_state <= state;
-		next_was_valid <= was_valid;
+        next_was_valid <= was_valid;
         valid_out <= '0';
         output <= (others => (others => '0'));
 
