@@ -6,24 +6,31 @@ use IEEE.MATH_REAL.ALL;
 
 use work.types.all;
 
-entity sum_tb is
-end sum_tb;
+entity mat_mul_tb is
+end mat_mul_tb;
 
-architecture tb of sum_tb is
-	signal a : array_type(10 downto 0)(15 downto 0);
-	signal c : signed(15 downto 0);
+architecture tb of mat_mul_tb is
+	signal a : array_type(5 downto 0)(15 downto 0);
+	signal b : array_type(5 downto 0)(15 downto 0);
+	signal c : array_type(3 downto 0)(15 downto 0);
 begin
-	dut : entity work.sum
+	dut : entity work.mat_mul
 		generic map(
 			data_width => 16,
-			num_inputs => 11)
+			num_dimensions => 2,
+			a_size => 6,
+			b_size => 6,
+			y_size => 4,
+			a_dim => (3, 2),
+			b_dim => (2, 3)
+		)
 		port map(
 			a => a,
-			c => c
+			b => b,
+			y => c
 		);
 	
 	process
-	    variable sum : signed(15 downto 0);
         variable seed1, seed2 : integer := 999;
         
         impure function rand_slv(len : integer) return std_logic_vector is
@@ -41,19 +48,13 @@ begin
             return slv;
         end function;
 	begin
-		for i in 0 to 10 loop
-			a(i) <= signed(rand_slv(16));
-		end loop;
+		a <= ("0100000000000000", "0010000000000000", "0100000000000000",
+		      "0001000000000000", "0100000000000000", "0001000000000000");
+		      
+		b <= ("0100000000000000", "0010000000000000",
+		      "0100000000000000", "0001000000000000",
+		      "0100000000000000", "0001000000000000");
 
 		wait for 1 ns;
-
-		sum := (others => '0');
-		for i in 0 to 10 loop
-			sum := sum + to_integer(signed(a(i)));
-		end loop;
-
-		assert c = sum report "Error: Sum (" & to_hstring(sum) & ") not mathcing inputs" severity error;
-
-	   wait for 1 ns;
 	end process;
 end tb;
