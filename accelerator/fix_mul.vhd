@@ -9,9 +9,9 @@ entity fix_mul is
         data_width : integer
     );
     Port (
-        a : in std_logic_vector(data_width - 1 downto 0);
-        b : in std_logic_vector(data_width - 1 downto 0);
-        res : out std_logic_vector(data_width - 1 downto 0)
+        a : in signed(data_width - 1 downto 0);
+        b : in signed(data_width - 1 downto 0);
+        res : out signed(data_width - 1 downto 0)
      );
 end fix_mul;
 
@@ -20,6 +20,6 @@ architecture Behavioral of fix_mul is
 
 	signal mul : signed(extended_size downto 0);
 begin
-	mul <= signed(a) * signed(b);
-	res <= std_logic_vector(mul(data_width * 2 - 1 - INTEGER_WIDTH downto DECIMAL_WIDTH));
+	mul <= a * b;
+	res <= mul(data_width * 2 - 1 - INTEGER_WIDTH downto DECIMAL_WIDTH);
 end Behavioral;

@@ -8,7 +8,7 @@ entity fix_mul_tb is
 end fix_mul_tb;
 
 architecture tb of fix_mul_tb is
-	signal a, b, c : std_logic_vector(15 downto 0);
+	signal a, b, c : signed(15 downto 0);
 begin
 	dut : entity work.fix_mul
 		generic map(data_width => 16)
@@ -36,8 +36,8 @@ begin
             return slv;
         end function;
 	begin
-		a <= rand_slv(16);
-		b <= rand_slv(16);
+		a <= signed(rand_slv(16));
+		b <= signed(rand_slv(16));
 		wait for 1 ns;
 --		assert c = std_logic_vector(to_signed(integer(((real(to_integer(unsigned(a))) / (2 ** 15)) * (real(to_integer(unsigned(a))) / (2 ** 15))) * 2 ** 15), 16)) report "Error: Input and output does not match" severity error;
 	end process;
