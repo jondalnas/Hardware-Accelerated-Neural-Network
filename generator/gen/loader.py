@@ -312,9 +312,13 @@ class ConvNode(Node):
         return "Conv"
 
     def to_vhdl_entity(self, data_width: int) -> str:
-        num_dimensions = len(self.output_size) - 2
+        num_dimensions = len(self.output_size)
         x_size = self.x.calc_output_node_size()
         w_size = self.w.calc_output_node_size()
+        kernel_size = 1
+        for e in self.kernel_shape:
+            kernel_size *= e
+
         bc = "_bc" if self.kernel_shape != self.w_dimensions else ""
 
         return ( "    " + self.name + " : entity work.conv\n"
@@ -325,6 +329,7 @@ class ConvNode(Node):
                 f"            dimensions_w => {list_to_vhdl(self.w_dimensions)},\n"
                 f"            w_size => {w_size},\n"
                 f"            kernel_shape => {list_to_vhdl(self.kernel_shape)},\n"
+                f"            kernel_size => {kernel_size},\n"
                 f"            dilation => {list_to_vhdl(self.dilation)},\n"
                 f"            stride => {list_to_vhdl(self.stride)},\n"
                 f"            data_width => {data_width},\n"
@@ -482,7 +487,7 @@ class MaxPoolNode(Node):
         return "MaxPool"
 
     def to_vhdl_entity(self, data_width: int) -> str:
-        num_dimensions = len(self.output_size) - 2
+        num_dimensions = len(self.output_size)
         input_size = self.x.calc_output_node_size()
         output_size = self.calc_output_node_size()
 
@@ -600,7 +605,7 @@ class MatMulNode(Node):
         return "MatMul"
 
     def to_vhdl_entity(self, data_width: int) -> str:
-        num_dimensions = len(self.output_size) - 2
+        num_dimensions = len(self.output_size)
         a_size = self.a.calc_output_node_size()
         b_size = self.b.calc_output_node_size()
         y_size = self.calc_output_node_size()

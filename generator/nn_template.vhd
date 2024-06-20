@@ -21,7 +21,7 @@ entity nn is
 end nn;
 
 architecture Behavioral of nn is
-    signal feedback, next_feedback : array_type(num_feedback-1 downto 0);
+    signal feedback, next_feedback : array_type(num_feedback-1 downto 0)(data_width - 1 downto 0);
     signal was_valid, next_was_valid : std_logic;
 
 -- STATES

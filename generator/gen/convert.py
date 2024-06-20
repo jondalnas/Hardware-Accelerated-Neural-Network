@@ -115,7 +115,7 @@ def get_constant(model: Model) -> str:
     return res
 
 def get_instructions(params: ModelParams) -> str:
-    res = f"    constant INSTRUCTIONS : array_type({len(params.mem_instructions) - 1} downto 0)(18 downto 0) := ("
+    res = f"    constant INSTRUCTIONS : instr_type({len(params.mem_instructions) - 1} downto 0)(18 downto 0) := ("
 
     for mi, num in reversed(params.mem_instructions):
         print(mi.value, num)
