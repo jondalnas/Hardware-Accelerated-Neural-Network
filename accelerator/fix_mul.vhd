@@ -1,35 +1,8 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date: 19.06.2024 12:50:32
--- Design Name: 
--- Module Name: fix_mul - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
-----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
+use work.defs.all;
 
 entity fix_mul is
     generic (
@@ -43,8 +16,10 @@ entity fix_mul is
 end fix_mul;
 
 architecture Behavioral of fix_mul is
+	constant extended_size : integer := data_width * 2 - 1;
 
+	signal mul : signed(extended_size downto 0);
 begin
-
-
+	mul <= signed(a) * signed(b);
+	res <= std_logic_vector(mul(data_width * 2 - 1 - INTEGER_WIDTH downto DECIMAL_WIDTH));
 end Behavioral;
