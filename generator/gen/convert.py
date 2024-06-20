@@ -105,7 +105,7 @@ def get_constant(model: Model) -> str:
                 res += "0 => \"" + int_to_std_logic_vector(c.c[0]) + "\");\n"
                 continue
 
-            for val in c.c:
+            for val in reversed(c.c):
                 res += "\"" + int_to_std_logic_vector(val) + "\", "
 
             res = res[:-2]
