@@ -21,30 +21,30 @@ entity mat_mul is
 end mat_mul;
 
 architecture Behavioral of mat_mul is
-	type res_array is array(y_size - 1 downto 0) of array_type(a_dim(1) - 1 downto 0)(data_width - 1 downto 0);
+	type res_array is array(y_size - 1 downto 0) of array_type(a_dim(0) - 1 downto 0)(data_width - 1 downto 0);
 	signal res : res_array;
 begin
 	dim2 : if num_dimensions = 2 generate
-		yl : for yy in 0 to a_dim(0) - 1 generate
-			xl : for xx in 0 to b_dim(1) - 1 generate
-				il : for i in 0 to a_dim(1) - 1 generate
+		yl : for yy in 0 to a_dim(1) - 1 generate
+			xl : for xx in 0 to b_dim(0) - 1 generate
+				il : for i in 0 to a_dim(0) - 1 generate
 					mul : entity work.fix_mul
 						generic map(data_width => data_width)
 						port map(
-							a => a(i + yy * a_dim(1)),
-							b => b(xx + i * b_dim(1)),
-							res => res(xx + yy * b_dim(1))(i)
+							a => a(i + yy * a_dim(0)),
+							b => b(xx + i * b_dim(0)),
+							res => res(xx + yy * b_dim(0))(i)
 						);
 				end generate;
 
 				sum : entity work.sum
 					generic map(
 						data_width => data_width,
-						num_inputs => a_dim(1)
+						num_inputs => a_dim(0)
 					)
 					port map(
-						a => res(xx + yy * b_dim(1)),
-						c => y(xx + yy * b_dim(1))
+						a => res(xx + yy * b_dim(0)),
+						c => y(xx + yy * b_dim(0))
 					);
 			end generate;
 		end generate;

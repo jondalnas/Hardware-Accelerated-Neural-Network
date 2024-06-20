@@ -21,8 +21,8 @@ begin
 			a_size => 6,
 			b_size => 6,
 			y_size => 4,
-			a_dim => (3, 2),
-			b_dim => (2, 3)
+			a_dim => (2, 3),
+			b_dim => (3, 2)
 		)
 		port map(
 			a => a,
