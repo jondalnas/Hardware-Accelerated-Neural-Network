@@ -6,24 +6,25 @@ use IEEE.MATH_REAL.ALL;
 
 use work.types.all;
 
-entity sum_tb is
-end sum_tb;
+entity broad_tb is
+end broad_tb;
 
-architecture tb of sum_tb is
-	signal a : array_type(10 downto 0)(15 downto 0);
-	signal c : std_logic_vector(15 downto 0);
+architecture tb of broad_tb is
+	signal input : array_type(7 downto 0)(15 downto 0);
+	signal output : array_type(15 downto 0)(15 downto 0);
 begin
-	dut : entity work.sum
+	dut : entity work.broad
 		generic map(
 			data_width => 16,
-			num_inputs => 11)
+			output_size => 16,
+			input_size => 8
+		)
 		port map(
-			a => a,
-			c => c
+			input => input,
+			output => output
 		);
 	
 	process
-	    variable sum : signed(15 downto 0);
         variable seed1, seed2 : integer := 999;
         
         impure function rand_slv(len : integer) return std_logic_vector is
@@ -41,18 +42,13 @@ begin
             return slv;
         end function;
 	begin
-		for i in 0 to 10 loop
-			a(i) <= rand_slv(16);
+		for i in 0 to 7 loop
+			input(i) <= rand_slv(16);
 		end loop;
 
 		wait for 1 ns;
 
-		sum := (others => '0');
-		for i in 0 to 10 loop
-			sum := sum + to_integer(signed(a(i)));
-		end loop;
-
-		assert c = std_logic_vector(sum) report "Error: Sum (" & to_hstring(sum) & ") not mathcing inputs" severity error;
+		assert output = (input & input) report "Error: Concatination failed" severity error;
 
 	   wait for 1 ns;
 	end process;
