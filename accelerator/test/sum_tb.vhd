@@ -42,7 +42,7 @@ begin
         end function;
 	begin
 		for i in 0 to 10 loop
-			a(i) <= rand_slv(16);
+			a(i) <= signed(rand_slv(16));
 		end loop;
 
 		wait for 1 ns;

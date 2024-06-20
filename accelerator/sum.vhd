@@ -13,12 +13,12 @@ entity sum is
 	);
 	port(
 		a : in array_type(num_inputs - 1 downto 0)(data_width - 1 downto 0);
-		c : out std_logic_vector(data_width - 1 downto 0)
+		c : out signed(data_width - 1 downto 0)
 	);
 end sum;
 
 architecture sum_behaviorial of sum is
-    signal c1, c2 : std_logic_vector(data_width - 1 downto 0);
+    signal c1, c2 : signed(data_width - 1 downto 0);
     
     constant half_lower : integer := num_inputs / 2;
     constant half_upper : integer := num_inputs - half_lower;
@@ -44,6 +44,6 @@ begin
 				a => a(half_lower - 1 downto 0),
 				c => c2
 			);
-		c <= std_logic_vector(signed(c1) + signed(c2));
+		c <= c1 + c2;
 	end generate;
 end architecture;
