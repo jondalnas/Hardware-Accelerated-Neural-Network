@@ -48,5 +48,16 @@ architecture Behavioral of div is
 
 begin
 
+    arr_div_gen : for i in 0 to input_size - 1 generate
+        div: entity work.fix_div
+        generic map (
+            data_width => data_width
+        )
+        port map (
+            dividend => a(i),
+            divisor => b(i),
+            res => c(i)
+        );
+    end generate;
 
 end Behavioral;
