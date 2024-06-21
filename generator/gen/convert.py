@@ -31,6 +31,8 @@ def convert_model(model: Model) -> tuple[str, str]:
                 defs += get_instructions(params)
             elif l.startswith("-- INPUT SIZE"):
                 defs += get_input_size(params)
+            elif l.startswith("-- NN SIZES"):
+                defs += get_nn_sizes(params)
             else:
                 defs += l
 
@@ -125,8 +127,13 @@ def get_instructions(params: ModelParams) -> str:
 
     return res
 
-def get_input_size(param: ModelParams) -> str:
-    return f"    constant INPUT_SIZE : Integer := {param.nn_input_size};\n"
+def get_input_size(params: ModelParams) -> str:
+    return f"    constant INPUT_SIZE : Integer := {params.nn_input_size};\n"
+
+def get_nn_sizes(params: ModelParams) -> str:
+    return (f"    constant NN_INPUT : Integer := {params.max_input};\n"
+            f"    constant NN_OUTPUT : Integer := {params.max_output};\n"
+            f"    constant NN_FEEDBACK : Integer := {params.max_feedback};\n")
 
 def int_to_std_logic_vector(val: float, data_width: int = 16, decimal_place = 1, signed: bool = True):
     val *= 1 << (data_width - decimal_place)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 import os.path
 import onnx
+import pathlib
 
 from enum import Enum
 from dataclasses import dataclass
@@ -672,7 +673,7 @@ class Model:
     input_attribs: dict[str, list[int]] = {}
     output_attribs: dict[str, list[int]] = {}
 
-    def __init__(self, path: str):
+    def __init__(self, path: pathlib.Path):
         model_path = os.path.expanduser(path)
         onnx_model = onnx.load(model_path)
 
