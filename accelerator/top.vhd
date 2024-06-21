@@ -3,6 +3,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 use work.types.all;
+use work.defs.all;
 
 entity top is
     port(
@@ -53,8 +54,8 @@ architecture Behavioral of top is
     
     signal valid_to_nn, valid_from_nn : std_logic;
     
-    signal data_to_nn : array_type(7 downto 0)(15 downto 0);
-    signal data_from_nn : array_type(7 downto 0)(15 downto 0);
+    signal data_to_nn, data_from_mem : array_type(NN_INPUT - 1 downto 0)(DATA_WIDTH - 1 downto 0);
+    signal data_from_nn, data_to_mem : array_type(NN_OUTPUT - 1 downto 0)(DATA_WIDTH - 2 downto 0);
     
     --Testing signals
     type bit_vec is array(7 downto 0) of std_logic;
@@ -111,7 +112,7 @@ begin
             mem_dr             => mem_dob
         );
         
-        uart_inst_0 : entity work.uart
+	uart_inst_0 : entity work.uart
         generic map(
             baud            => 9600,
             clock_frequency => positive(100_000_000 / 2)
@@ -128,7 +129,7 @@ begin
             rx                  => serial_tx
         );
         
-        memory3_inst_0 : entity work.memory3
+	memory3_inst_0 : entity work.memory3
         generic map(
             ADDR_SIZE => 16
         )
@@ -148,12 +149,12 @@ begin
             dob   => mem_dob
         );
         
-        nerual_net_inst : entity work.nn
+	nerual_net_inst : entity work.nn
         generic map (
-            num_in => 8,
-            num_out => 8,
-			num_feedback => 8,
-            data_width => 16
+            num_in => NN_INPUT,
+            num_out => NN_OUTPUT,
+			num_feedback => NN_FEEDBACK,
+            data_width => DATA_WIDTH
         )
         port map (
             clk => clk,
@@ -164,18 +165,17 @@ begin
             output => data_from_nn
         );
         
-        memory_fsm_inst : entity work.memory_fsm
+	memory_fsm_inst : entity work.memory_fsm
         generic map (
-            nn_num_in => 8,
-            nn_num_out => 8,
-            data_width => 16
+            nn_num_in => NN_INPUT,
+            nn_num_out => NN_OUTPUT,
+            data_width => DATA_WIDTH
         )
-        
         port map (
             clk => clk,
             reset => rst,
-            nn_input => data_to_nn,
-            nn_output => data_from_nn,
+            nn_input => data_from_mem,
+            nn_output => data_to_mem,
             valid_in => valid_from_nn,
             valid_out => valid_to_nn,
             led => led,
@@ -186,5 +186,18 @@ begin
             mem_we => we,
             mem_addr => addr
         );
+	
+	process(clk)
+	begin
+		if rising_edge(clk) then
+			if rst then
+				data_to_nn <= (others => (others => '0'));
+				data_to_mem <= (others => (others => '0'));
+			else
+				data_to_nn <= data_from_mem;
+				data_to_mem <= data_from_nn;
+			end if;
+		end if;
+	end process;
 
 end Behavioral;

@@ -146,6 +146,7 @@ begin
             pads => (0, 0, 0, 0),
             strides => (2, 2),
             in_dimensions => (1, 8, 28, 28),
+            out_dimensions => (1, 8, 14, 14),
             input_size => 6272,
             output_size => 1568,
             data_width => 16
@@ -219,6 +220,7 @@ begin
             pads => (0, 0, 0, 0),
             strides => (3, 3),
             in_dimensions => (1, 16, 14, 14),
+            out_dimensions => (1, 16, 4, 4),
             input_size => 3136,
             output_size => 256,
             data_width => 16
