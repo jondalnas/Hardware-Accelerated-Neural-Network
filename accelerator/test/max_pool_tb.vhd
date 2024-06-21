@@ -12,8 +12,11 @@ architecture max_pool_test of max_pool_tb is
 
     signal x : array_type((1*1*4*4) - 1 downto 0)(DATA_WIDTH - 1 downto 0);
     signal y : array_type((1*1*2*2) - 1 downto 0)(DATA_WIDTH - 1 downto 0);
+    signal clk, rst, valid_in, valid_out : std_logic := '0';
 
 begin
+    clk <= not clk after 500 ns;
+
     max : entity work.max_pool
     generic map(
         num_dimensions => 4,
@@ -27,16 +30,26 @@ begin
         data_width => DATA_WIDTH
     )
     port map(
+        clk => clk,
+        rst => rst,
+        valid_in => valid_in,
+        valid_out => valid_out,
         x => x,
         y => y
     );
     
     process
     begin
+        rst <= '1';
+        wait for 500 ns;
+        rst <= '0';
+        wait for 500 ns;
         for i in 0 to (1*1*4*4) - 1 loop
             x(i) <= to_signed(5 + i, DATA_WIDTH);
         end loop;
-        wait for 200 ns;
+        valid_in <= '1';
+        wait until valid_out = '1';
+        valid_in <= '0';
     end process;
 
 end max_pool_test;
