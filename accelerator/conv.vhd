@@ -82,7 +82,7 @@ begin
 		end generate;
 	end generate;
 	
-	 process(all)
+    process(all)
     begin
         valid_out <= '0';
         next_out_array <= out_array;

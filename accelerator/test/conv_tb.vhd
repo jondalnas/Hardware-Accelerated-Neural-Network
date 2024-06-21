@@ -79,5 +79,6 @@ begin
         valid_in <= '1';
 		wait until valid_out = '1';
 		valid_in <= '0';
+		
 	end process;
 end tb;

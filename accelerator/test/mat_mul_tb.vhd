@@ -13,7 +13,11 @@ architecture tb of mat_mul_tb is
 	signal a : array_type(5 downto 0)(15 downto 0);
 	signal b : array_type(5 downto 0)(15 downto 0);
 	signal c : array_type(3 downto 0)(15 downto 0);
+	signal clk, rst, valid_in, valid_out : std_logic := '0';
+	
 begin
+    clk <= not clk after 500 ns;
+    
 	dut : entity work.mat_mul
 		generic map(
 			data_width => 16,
@@ -25,11 +29,15 @@ begin
 			b_dim => (3, 2)
 		)
 		port map(
-			a => a,
-			b => b,
-			y => c
+		    clk => clk,
+		    rst => rst,
+		    valid_in => valid_in,
+		    valid_out => valid_out,
+            a => a,
+            b => b,
+            y => c
 		);
-	
+
 	process
         variable seed1, seed2 : integer := 999;
         
@@ -48,13 +56,20 @@ begin
             return slv;
         end function;
 	begin
+	    rst <= '1';
+	    wait for 500 ns;
+	    rst <= '0';
+	    wait for 500 ns;
 		a <= ("0100000000000000", "0010000000000000", "0100000000000000",
 		      "0001000000000000", "0100000000000000", "0001000000000000");
 		      
 		b <= ("0100000000000000", "0010000000000000",
 		      "0100000000000000", "0001000000000000",
 		      "0100000000000000", "0001000000000000");
-
-		wait for 1 ns;
+        valid_in <= '1';
+        wait until valid_out = '1';
+        valid_in <= '0';
+         
+		assert c = (X"5000", X"1c00", X"3000", X"0e00") report "Error: output not correct" severity error;
 	end process;
 end tb;
