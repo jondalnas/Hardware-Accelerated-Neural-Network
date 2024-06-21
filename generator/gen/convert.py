@@ -56,20 +56,24 @@ def get_fsm(params: ModelParams) -> str:
     for i, n in enumerate(params.operations):
         connection, should_handshake = n.generate_connections()
 
-        res += f"            when {i+1} =>\n"
+        if i == len(params.operations) - 1:
+            res += "            when others =>\n"
+        else:
+            res += f"            when {i+1} =>\n"
+
         res += connection
         if not should_handshake or i == 0:
-            res += "                next_state <= state + 1;\n"
+            res += f"                next_state <= {i + 2};\n"
         else:
             res += "                if valid_in then\n"
             res += "                    valid_out <= '0';\n"
             res += "                    was_valid <= '1';\n"
             res += "                elsif was_valid then\n"
             res += "                    was_valid <= '0';\n"
-            if i == len(params.operations):
-                res += "                    next_state <= state + 1;\n"
-            else:
+            if i == len(params.operations) - 1:
                 res += "                    next_state <= 0;\n"
+            else:
+                res += f"                    next_state <= {i + 2};\n"
             res += "                end if;\n"
 
     return res
@@ -91,7 +95,7 @@ def get_entities(params: ModelParams) -> str:
     for n in params.operations:
         res += n.to_vhdl_entity(16)
 
-        for index, input_size, output_size in n.get_intput_broadcasts():
+        for index, input_size, output_size in n.get_input_broadcasts():
             res += BROADCAST.format(n.name + "_" + str(index), input_size, output_size, 16, n.name + f"_i_{index}", n.name + f"_bc_i_{index}")
 
     return res
@@ -146,5 +150,5 @@ def int_to_std_logic_vector(val: float, data_width: int = 16, decimal_place = 1,
         return "1" + ("0" * (data_width - 1))
 
     val = int(val)
-    res = bin(val if val > 0 or not signed else val + (1 << data_width))[2:]
+    res = bin(val if val >= 0 or not signed else val + (1 << data_width))[2:]
     return ("0" * (data_width - len(res))) + res

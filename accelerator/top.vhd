@@ -13,17 +13,7 @@ entity top is
         start      : in  std_logic;
         -- Serial interface for PC communication
         serial_tx  : in  STD_LOGIC;     -- from the PC
-        serial_rx  : out STD_LOGIC;      -- to the PC
-        -- Testing ports
-        led1 : out std_logic;
-        led2 : out std_logic;
-        led3 : out std_logic;
-        led4 : out std_logic;
-        led5 : out std_logic;
-        led6 : out std_logic;
-        led7 : out std_logic;
-        led8 : out std_logic;
-        txled : out std_logic
+        serial_rx  : out STD_LOGIC      -- to the PC
     );
 end top;
 
@@ -55,35 +45,9 @@ architecture Behavioral of top is
     signal valid_to_nn, valid_from_nn : std_logic;
     
     signal data_to_nn, data_from_mem : array_type(NN_INPUT - 1 downto 0)(DATA_WIDTH - 1 downto 0);
-    signal data_from_nn, data_to_mem : array_type(NN_OUTPUT - 1 downto 0)(DATA_WIDTH - 2 downto 0);
-    
-    --Testing signals
-    type bit_vec is array(7 downto 0) of std_logic;
-    signal correct : bit_vec := (others => '0');
+    signal data_from_nn, data_to_mem : array_type(NN_OUTPUT - 1 downto 0)(DATA_WIDTH - 1 downto 0);
     
 begin
-    
-    --Testing process
-    test : process (data_to_nn, data_from_nn)
-    begin
-        for i in 0 to 7 loop
-            if data_to_nn(i) = data_from_nn(i) then
-                correct(i) <= '1';
-            end if;
-        end loop;
-    end process;
-    
-    -- Testing    
-    led1 <= data_stream_out(0);
-    led2 <= data_stream_out(1);
-    led3 <= data_stream_out(2);
-    led4 <= data_stream_out(3);
-    led5 <= data_stream_out(4);
-    led6 <= data_stream_out(5);
-    led7 <= data_stream_out(6);
-    led8 <= data_stream_out(7);
-    txled <= serial_tx;
-    
     clock_divider_inst_0 : entity work.clock_divider
         generic map(
             DIVIDE => CLK_DIVISION_FACTOR
