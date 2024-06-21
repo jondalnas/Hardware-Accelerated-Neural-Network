@@ -3,21 +3,20 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 use IEEE.math_real.all;
 
-
 use work.types.all;
 use work.defs.all;
 
-entity div_tb is
-end div_tb;
+entity add_tb is
+end add_tb;
 
-architecture div_test of div_tb is
+architecture add_test of add_tb is
     signal a, b, c : array_type(5 downto 0)(DATA_WIDTH - 1 downto 0);
     
 	signal clk, rst, valid_in, valid_out : std_logic := '0';
 begin
 	clk <= not clk after 100 ns;
 
-    div : entity work.div
+    add : entity work.add
         generic map(
             input_size => 6,
             data_width => DATA_WIDTH
@@ -32,8 +31,7 @@ begin
             c => c
         );
         
-        
-    process    
+    process
         variable seed1, seed2 : integer := 999;
         
         impure function rand_slv(len : integer) return std_logic_vector is
@@ -64,6 +62,10 @@ begin
         wait until valid_out = '1';
 		valid_in <= '0';
 
+		for i in 0 to 5 loop
+			assert c(i) = a(i) + b(i) report "Error: Sum incorrect" severity error;
+		end loop;
+
 		wait until valid_out = '0';
     end process;
-end div_test;
+end add_test;

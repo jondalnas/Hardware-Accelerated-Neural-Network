@@ -61,7 +61,7 @@ class Node:
     def get_inputs(self) -> list[Node]:
         return []
 
-    def get_intput_broadcasts(self) -> list[tuple[int, int, int]]:
+    def get_input_broadcasts(self) -> list[tuple[int, int, int]]:
         return []
 
     def get_input_index(self, node: Node) -> int:
@@ -198,7 +198,7 @@ class DivNode(Node):
     def get_inputs(self) -> list[Node]:
         return [self.a, self.b]
 
-    def get_intput_broadcasts(self) -> list[tuple[int, int, int]]:
+    def get_input_broadcasts(self) -> list[tuple[int, int, int]]:
         if self.is_broadcasting:
             return [(1, self.b.calc_output_node_size(), self.calc_output_node_size())]
         return []
@@ -249,6 +249,9 @@ class DivNode(Node):
                 f"            data_width => {data_width}\n"
                  "        )\n"
                  "        port map (\n"
+                 "            clk => clk,\n"
+                 "            valid_in => " + self.name + "_valid_in,\n"
+                 "            valid_out => " + self.name + "_valid_out,\n"
                  "            a => " + self.name + "_i_0,\n"
                  "            b => " + self.name + bc + "_i_1,\n"
                  "            c => " + self.name + "_o\n"
@@ -282,15 +285,15 @@ class ConvNode(Node):
     def get_inputs(self) -> list[Node]:
         return [self.x, self.w]
 
-    def get_intput_broadcasts(self) -> list[tuple[int, int, int]]:
-        if self.kernel_shape == self.w_dimensions:
+    def get_input_broadcasts(self) -> list[tuple[int, int, int]]:
+        if self.kernel_shape == self.w_dimensions[2:] and self.x_dimensions[1] == self.w_dimensions[1]:
             return []
 
         kernel_size = 1
         for k in self.kernel_shape:
             kernel_size *= k
 
-        return [(1, self.w.calc_output_node_size(), kernel_size)]
+        return [(1, self.w.calc_output_node_size(), kernel_size * self.w_dimensions[0])]
 
     def replace_input(self, original: Node, new: Node):
         if self.x == original:
@@ -320,7 +323,7 @@ class ConvNode(Node):
         for e in self.kernel_shape:
             kernel_size *= e
 
-        bc = "_bc" if self.kernel_shape != self.w_dimensions else ""
+        bc = "_bc" if self.kernel_shape != self.w_dimensions[2:] or self.x_dimensions[1] != self.w_dimensions[1] else ""
 
         return ( "    " + self.name + " : entity work.conv\n"
                  "        generic map (\n"
@@ -337,6 +340,9 @@ class ConvNode(Node):
                 f"            y_size => {self.calc_output_node_size()}\n"
                  "        )\n"
                  "        port map (\n"
+                 "            clk => clk,\n"
+                 "            valid_in => " + self.name + "_valid_in,\n"
+                 "            valid_out => " + self.name + "_valid_out,\n"
                  "            x => " + self.name + "_i_0,\n"
                  "            w => " + self.name + bc + "_i_1,\n"
                  "            y => " + self.name + "_o\n"
@@ -365,7 +371,7 @@ class AddNode(Node):
     def get_inputs(self) -> list[Node]:
         return [self.a, self.b]
 
-    def get_intput_broadcasts(self) -> list[tuple[int, int, int]]:
+    def get_input_broadcasts(self) -> list[tuple[int, int, int]]:
         if self.is_broadcasting:
             return [(1, self.b.calc_output_node_size(), self.calc_output_node_size())]
         return []
@@ -416,6 +422,9 @@ class AddNode(Node):
                 f"            data_width => {data_width}\n"
                  "        )\n"
                  "        port map (\n"
+                 "            clk => clk,\n"
+                 "            valid_in => " + self.name + "_valid_in,\n"
+                 "            valid_out => " + self.name + "_valid_out,\n"
                  "            a => " + self.name + "_i_0,\n"
                  "            b => " + self.name + bc + "_i_1,\n"
                  "            c => " + self.name + "_o\n"
@@ -446,6 +455,9 @@ class ReluNode(Node):
                 f"            data_width => {data_width}\n"
                  "        )\n"
                  "        port map (\n"
+                 "            clk => clk,\n"
+                 "            valid_in => " + self.name + "_valid_in,\n"
+                 "            valid_out => " + self.name + "_valid_out,\n"
                  "            x => " + self.name + "_i_0,\n"
                  "            y => " + self.name + "_o\n"
                  "        );\n")
@@ -505,6 +517,9 @@ class MaxPoolNode(Node):
                 f"            data_width => {data_width}\n"
                  "        )\n"
                  "        port map (\n"
+                 "            clk => clk,\n"
+                 "            valid_in => " + self.name + "_valid_in,\n"
+                 "            valid_out => " + self.name + "_valid_out,\n"
                  "            x => " + self.name + "_i_0,\n"
                  "            y => " + self.name + "_o\n"
                  "        );\n")
@@ -556,7 +571,7 @@ class MatMulNode(Node):
     def get_inputs(self):
         return [self.a, self.b]
 
-    def get_intput_broadcasts(self) -> list[tuple[int, int, int]]:
+    def get_input_broadcasts(self) -> list[tuple[int, int, int]]:
         if self.broadcasting == 0:
             return [(0, self.a.calc_output_node_size(), self.calc_output_node_size())]
 
@@ -625,6 +640,9 @@ class MatMulNode(Node):
                 f"            data_width => {data_width}\n"
                  "        )\n"
                  "        port map (\n"
+                 "            clk => clk,\n"
+                 "            valid_in => " + self.name + "_valid_in,\n"
+                 "            valid_out => " + self.name + "_valid_out,\n"
                  "            a => " + self.name + bca + "_i_0,\n"
                  "            b => " + self.name + bcb + "_i_1,\n"
                  "            y => " + self.name + "_o\n"
@@ -804,8 +822,9 @@ class Model:
 
             for i,input_node in enumerate(n.get_inputs()):
                 res.append((n.name + f"_i_{i}", input_node.calc_output_node_size()))
-                
-            for index, _, size in n.get_intput_broadcasts():
+
+            for index, _, size in n.get_input_broadcasts():
+                print(n.name)
                 res.append((n.name + f"_bc_i_{index}", size))
 
         return res
