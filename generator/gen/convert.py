@@ -15,13 +15,15 @@ def convert_model(model: Model) -> tuple[str, str]:
             if l.startswith("-- STATES"):
                 nn += get_states(params)
             elif l.startswith("-- SIGNALS"):
-                nn += get_signals(model)
+                nn += get_signals(model, params)
             elif l.startswith("-- FSM"):
                 nn += get_fsm(params)
             elif l.startswith("-- ENTITIES"):
                 nn += get_entities(params)
             elif l.startswith("-- CONSTANT"):
                 nn += get_constant(model)
+            elif l.startswith("-- INIT SIGNALS"):
+                nn += get_init_signals(params)
             else:
                 nn += l
 
@@ -41,12 +43,18 @@ def convert_model(model: Model) -> tuple[str, str]:
 def get_states(params: ModelParams) -> str:
     return "    signal state, next_state : integer;\n"
 
-def get_signals(model: Model) -> str:
+def get_signals(model: Model, params: ModelParams) -> str:
     res = ""
     START = "    signal "
 
     for sn,sw in model.generate_signals():
         res += START + sn + f" : array_type({sw - 1} downto 0)(data_width-1 downto 0);\n"
+
+    res += START
+    for n in params.operations:
+        res += n.name + "_valid_in, " + n.name + "_valid_out, "
+
+    res = res[:-2] + " : std_logic;\n"
 
     return res
 
@@ -62,19 +70,32 @@ def get_fsm(params: ModelParams) -> str:
             res += f"            when {i+1} =>\n"
 
         res += connection
+        res += "                " + n.name + "_valid_in <= '1';\n"
         if not should_handshake or i == 0:
-            res += f"                next_state <= {i + 2};\n"
+            res +=  "                if " + n.name + "_valid_out then\n"
+            res += f"                    next_state <= {i + 2};\n"
+            res +=  "                end if;\n"
         else:
-            res += "                if valid_in then\n"
+            res += "                valid_out <= " + n.name + "_valid_out;\n"
+            res += "                if not valid_in then\n"
+            res += "                    next_was_valid <= '0';\n"
             res += "                    valid_out <= '0';\n"
-            res += "                    was_valid <= '1';\n"
-            res += "                elsif was_valid then\n"
-            res += "                    was_valid <= '0';\n"
+            res += "                elsif not was_valid then\n"
+            res += "                    next_was_valid <= '1';\n"
             if i == len(params.operations) - 1:
                 res += "                    next_state <= 0;\n"
             else:
                 res += f"                    next_state <= {i + 2};\n"
             res += "                end if;\n"
+
+    return res
+
+def get_init_signals(params: ModelParams) -> str:
+    res = ""
+
+    for n in params.operations:
+        for i, _ in enumerate(n.get_inputs()):
+            res += "        " + n.name + f"_i_{i} <= (others => (others => '0'));\n"
 
     return res
 

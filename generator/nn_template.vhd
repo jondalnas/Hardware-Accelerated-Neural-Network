@@ -38,6 +38,7 @@ begin
         next_was_valid <= was_valid;
         valid_out <= '0';
         output <= (others => (others => '0'));
+-- INIT SIGNALS
 
         case state is
             when 0 =>

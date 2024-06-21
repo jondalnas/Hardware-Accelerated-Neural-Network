@@ -58,8 +58,107 @@ architecture Behavioral of nn is
     signal Plus214_o : array_type(9 downto 0)(data_width-1 downto 0);
     signal Plus214_i_0 : array_type(9 downto 0)(data_width-1 downto 0);
     signal Plus214_i_1 : array_type(9 downto 0)(data_width-1 downto 0);
+    signal Block386_valid_in, Block386_valid_out, Convolution28_valid_in, Convolution28_valid_out, Plus30_valid_in, Plus30_valid_out, ReLU32_valid_in, ReLU32_valid_out, Pooling66_valid_in, Pooling66_valid_out, Convolution110_valid_in, Convolution110_valid_out, Plus112_valid_in, Plus112_valid_out, ReLU114_valid_in, ReLU114_valid_out, Pooling160_valid_in, Pooling160_valid_out, Times212_valid_in, Times212_valid_out, Plus214_valid_in, Plus214_valid_out : std_logic;
 begin
-    
+    Block386 : entity work.div
+        generic map (
+            input_size => 784,
+            data_width => 16
+        )
+        port map (
+            clk => clk,
+            valid_in => Block386_valid_in,
+            valid_out => Block386_valid_out,
+            a => Block386_i_0,
+            b => Block386_bc_i_1,
+            c => Block386_o
+        );
+    Block386_1_bc : entity work.broad
+        generic map(
+            input_size => 1,
+            output_size => 784,
+            data_width => 16
+        )
+        port map(
+            input => Block386_i_1,
+            output => Block386_bc_i_1
+        );
+    Convolution28 : entity work.conv
+        generic map (
+            num_dimensions => 4,
+            dimensions_x => (1, 1, 28, 28),
+            x_size => 784,
+            dimensions_w => (8, 1, 5, 5),
+            w_size => 200,
+            kernel_shape => (5, 5),
+            kernel_size => 25,
+            dilation => (1, 1),
+            stride => (1, 1),
+            data_width => 16,
+            y_size => 6272
+        )
+        port map (
+            clk => clk,
+            valid_in => Convolution28_valid_in,
+            valid_out => Convolution28_valid_out,
+            x => Convolution28_i_0,
+            w => Convolution28_i_1,
+            y => Convolution28_o
+        );
+    Plus30 : entity work.add
+        generic map (
+            input_size => 6272,
+            data_width => 16
+        )
+        port map (
+            clk => clk,
+            valid_in => Plus30_valid_in,
+            valid_out => Plus30_valid_out,
+            a => Plus30_i_0,
+            b => Plus30_bc_i_1,
+            c => Plus30_o
+        );
+    Plus30_1_bc : entity work.broad
+        generic map(
+            input_size => 8,
+            output_size => 6272,
+            data_width => 16
+        )
+        port map(
+            input => Plus30_i_1,
+            output => Plus30_bc_i_1
+        );
+    ReLU32 : entity work.relu
+        generic map (
+            input_size => 6272,
+            data_width => 16
+        )
+        port map (
+            clk => clk,
+            valid_in => ReLU32_valid_in,
+            valid_out => ReLU32_valid_out,
+            x => ReLU32_i_0,
+            y => ReLU32_o
+        );
+    Pooling66 : entity work.max_pool
+        generic map (
+            num_dimensions => 4,
+            kernel_shape => (2, 2),
+            pads => (0, 0, 0, 0),
+            strides => (2, 2),
+            in_dimensions => (1, 8, 28, 28),
+            out_dimensions => (1, 8, 14, 14),
+            input_size => 6272,
+            output_size => 1568,
+            data_width => 16
+        )
+        port map (
+            clk => clk,
+            valid_in => Pooling66_valid_in,
+            valid_out => Pooling66_valid_out,
+            x => Pooling66_i_0,
+            y => Pooling66_o
+        );
     Convolution110 : entity work.conv
         generic map (
             num_dimensions => 4,
@@ -75,6 +174,9 @@ begin
             y_size => 3136
         )
         port map (
+            clk => clk,
+            valid_in => Convolution110_valid_in,
+            valid_out => Convolution110_valid_out,
             x => Convolution110_i_0,
             w => Convolution110_i_1,
             y => Convolution110_o
@@ -85,6 +187,9 @@ begin
             data_width => 16
         )
         port map (
+            clk => clk,
+            valid_in => Plus112_valid_in,
+            valid_out => Plus112_valid_out,
             a => Plus112_i_0,
             b => Plus112_bc_i_1,
             c => Plus112_o
@@ -105,6 +210,9 @@ begin
             data_width => 16
         )
         port map (
+            clk => clk,
+            valid_in => ReLU114_valid_in,
+            valid_out => ReLU114_valid_out,
             x => ReLU114_i_0,
             y => ReLU114_o
         );
@@ -121,6 +229,9 @@ begin
             data_width => 16
         )
         port map (
+            clk => clk,
+            valid_in => Pooling160_valid_in,
+            valid_out => Pooling160_valid_out,
             x => Pooling160_i_0,
             y => Pooling160_o
         );
@@ -135,6 +246,9 @@ begin
             data_width => 16
         )
         port map (
+            clk => clk,
+            valid_in => Times212_valid_in,
+            valid_out => Times212_valid_out,
             a => Times212_i_0,
             b => Times212_i_1,
             y => Times212_o
@@ -145,6 +259,9 @@ begin
             data_width => 16
         )
         port map (
+            clk => clk,
+            valid_in => Plus214_valid_in,
+            valid_out => Plus214_valid_out,
             a => Plus214_i_0,
             b => Plus214_i_1,
             c => Plus214_o
@@ -164,6 +281,24 @@ begin
         next_was_valid <= was_valid;
         valid_out <= '0';
         output <= (others => (others => '0'));
+        Block386_i_0 <= (others => (others => '0'));
+        Block386_i_1 <= (others => (others => '0'));
+        Convolution28_i_0 <= (others => (others => '0'));
+        Convolution28_i_1 <= (others => (others => '0'));
+        Plus30_i_0 <= (others => (others => '0'));
+        Plus30_i_1 <= (others => (others => '0'));
+        ReLU32_i_0 <= (others => (others => '0'));
+        Pooling66_i_0 <= (others => (others => '0'));
+        Convolution110_i_0 <= (others => (others => '0'));
+        Convolution110_i_1 <= (others => (others => '0'));
+        Plus112_i_0 <= (others => (others => '0'));
+        Plus112_i_1 <= (others => (others => '0'));
+        ReLU114_i_0 <= (others => (others => '0'));
+        Pooling160_i_0 <= (others => (others => '0'));
+        Times212_i_0 <= (others => (others => '0'));
+        Times212_i_1 <= (others => (others => '0'));
+        Plus214_i_0 <= (others => (others => '0'));
+        Plus214_i_1 <= (others => (others => '0'));
 
         case state is
             when 0 =>
@@ -174,51 +309,83 @@ begin
             when 1 =>
                 Block386_i_0 <= input(783 downto 0);
                 next_feedback(783 downto 0) <= Block386_o;
-                next_state <= 2;
+                Block386_valid_in <= '1';
+                if Block386_valid_out then
+                    next_state <= 2;
+                end if;
             when 2 =>
                 Convolution28_i_0 <= feedback(783 downto 0);
                 next_feedback(6271 downto 0) <= Convolution28_o;
-                next_state <= 3;
+                Convolution28_valid_in <= '1';
+                if Convolution28_valid_out then
+                    next_state <= 3;
+                end if;
             when 3 =>
                 Plus30_i_0 <= feedback(6271 downto 0);
                 next_feedback(6271 downto 0) <= Plus30_o;
-                next_state <= 4;
+                Plus30_valid_in <= '1';
+                if Plus30_valid_out then
+                    next_state <= 4;
+                end if;
             when 4 =>
                 ReLU32_i_0 <= feedback(6271 downto 0);
                 next_feedback(6271 downto 0) <= ReLU32_o;
-                next_state <= 5;
+                ReLU32_valid_in <= '1';
+                if ReLU32_valid_out then
+                    next_state <= 5;
+                end if;
             when 5 =>
                 Pooling66_i_0 <= feedback(6271 downto 0);
                 next_feedback(1567 downto 0) <= Pooling66_o;
-                next_state <= 6;
+                Pooling66_valid_in <= '1';
+                if Pooling66_valid_out then
+                    next_state <= 6;
+                end if;
             when 6 =>
                 Convolution110_i_0 <= feedback(1567 downto 0);
                 next_feedback(3135 downto 0) <= Convolution110_o;
-                next_state <= 7;
+                Convolution110_valid_in <= '1';
+                if Convolution110_valid_out then
+                    next_state <= 7;
+                end if;
             when 7 =>
                 Plus112_i_0 <= feedback(3135 downto 0);
                 next_feedback(3135 downto 0) <= Plus112_o;
-                next_state <= 8;
+                Plus112_valid_in <= '1';
+                if Plus112_valid_out then
+                    next_state <= 8;
+                end if;
             when 8 =>
                 ReLU114_i_0 <= feedback(3135 downto 0);
                 next_feedback(3135 downto 0) <= ReLU114_o;
-                next_state <= 9;
+                ReLU114_valid_in <= '1';
+                if ReLU114_valid_out then
+                    next_state <= 9;
+                end if;
             when 9 =>
                 Pooling160_i_0 <= feedback(3135 downto 0);
                 next_feedback(255 downto 0) <= Pooling160_o;
-                next_state <= 10;
+                Pooling160_valid_in <= '1';
+                if Pooling160_valid_out then
+                    next_state <= 10;
+                end if;
             when 10 =>
                 Times212_i_0 <= feedback(255 downto 0);
                 next_feedback(9 downto 0) <= Times212_o;
-                next_state <= 11;
+                Times212_valid_in <= '1';
+                if Times212_valid_out then
+                    next_state <= 11;
+                end if;
             when others =>
                 Plus214_i_0 <= feedback(9 downto 0);
                 output(9 downto 0) <= Plus214_o;
-                if valid_in then
+                Plus214_valid_in <= '1';
+                valid_out <= Plus214_valid_out;
+                if not valid_in then
+                    next_was_valid <= '0';
                     valid_out <= '0';
-                    was_valid <= '1';
-                elsif was_valid then
-                    was_valid <= '0';
+                elsif not was_valid then
+                    next_was_valid <= '1';
                     next_state <= 0;
                 end if;
         end case;
