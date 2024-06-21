@@ -121,7 +121,7 @@ def get_instructions(params: ModelParams) -> str:
 
     for mi, num in reversed(params.mem_instructions):
         print(mi.value, num)
-        res += "\"" + int_to_std_logic_vector(mi.value[0] + (num << 3), decimal_place=16, signed=False) + "\", "
+        res += "\"" + int_to_std_logic_vector(mi.value[0] + (num << 3), data_width=19, decimal_place=19, signed=False) + "\", "
 
     res = res[:-2] + ");\n"
 

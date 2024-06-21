@@ -499,6 +499,7 @@ class MaxPoolNode(Node):
                 f"            pads => {list_to_vhdl(self.pads)},\n"
                 f"            strides => {list_to_vhdl(self.strides)},\n"
                 f"            in_dimensions => {list_to_vhdl(self.x_dimensions)},\n"
+                f"            out_dimensions => {list_to_vhdl(self.output_size)},\n"
                 f"            input_size => {input_size},\n"
                 f"            output_size => {output_size},\n"
                 f"            data_width => {data_width}\n"
