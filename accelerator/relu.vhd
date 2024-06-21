@@ -20,6 +20,7 @@ end relu;
 
 architecture Behavioral of relu is
 begin
+	valid_out <= valid_in;
     relu_gen : for i in 0 to input_size - 1 generate
         y(i) <= x(i) when x(i)(data_width - 1) = '0' else (others => '0');
     end generate;
