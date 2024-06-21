@@ -10,6 +10,10 @@ entity add is
         data_width : integer
     );
     Port ( 
+		clk : in std_logic;
+		rst : in std_logic;
+		valid_in : in std_logic;
+		valid_out : out std_logic;
         a : in array_type(input_size - 1 downto 0)(data_width - 1 downto 0);
         b : in array_type(input_size - 1 downto 0)(data_width - 1 downto 0);
         c : out array_type(input_size - 1 downto 0)(data_width - 1 downto 0)

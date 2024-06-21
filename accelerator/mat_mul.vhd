@@ -14,6 +14,10 @@ entity mat_mul is
         data_width : integer
     );
     Port (
+		clk : in std_logic;
+		rst : in std_logic;
+		valid_in : in std_logic;
+		valid_out : out std_logic;
         a : in array_type(a_size - 1 downto 0)(data_width - 1 downto 0);
         b : in array_type(b_size - 1 downto 0)(data_width - 1 downto 0);
         y : out array_type(y_size - 1 downto 0)(data_width - 1 downto 0)
