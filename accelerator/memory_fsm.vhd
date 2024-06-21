@@ -78,8 +78,8 @@ begin
             when INPUT_SEND =>
                 valid_out <= '0';
                 mem_en <= '0';
-                nn_input(TO_INTEGER(i)) <= from_mem(data_width - 1 downto 0);
-                nn_input(TO_INTEGER(i +1)) <= from_mem(data_width * 2 - 1 downto data_width);
+                nn_input(TO_INTEGER(i)) <= signed(from_mem(data_width - 1 downto 0));
+                nn_input(TO_INTEGER(i +1)) <= signed(from_mem(data_width * 2 - 1 downto data_width));
                 next_i <= i + 2;
                 if (i = TO_UNSIGNED(nn_num_in - 2, i'length)) and (not (inst = 4)) then
                     next_state <= WAIT_DONE;
@@ -117,7 +117,7 @@ begin
                 next_i <= i;
                 mem_en <= '0';
                 mem_we <= '0';
-                rec_data <= nn_output(TO_INTEGER(nn_num_out - (i + 1) - 1)) & nn_output(TO_INTEGER(nn_num_out - i  - 1));
+                rec_data <= std_logic_vector(nn_output(TO_INTEGER(nn_num_out - (i + 1) - 1))) & std_logic_vector(nn_output(TO_INTEGER(nn_num_out - i  - 1)));
                 next_state <= WRITE;
             
             when WRITE =>
@@ -150,11 +150,11 @@ begin
                 next_stack_ptr <= stack_ptr - 1;
                 next_i <= i + 2;
                 
-                nn_input(TO_INTEGER(i)) <= from_mem(data_width - 1 downto 0);
-                nn_input(TO_INTEGER(i + 1)) <= from_mem(data_width * 2 - 1 downto data_width);
+                nn_input(TO_INTEGER(i)) <= signed(from_mem(data_width - 1 downto 0));
+                nn_input(TO_INTEGER(i + 1)) <= signed(from_mem(data_width * 2 - 1 downto data_width));
                 if inst = 4 then 
-                    nn_input(TO_INTEGER(i) + integer(ceil(real(INPUT_SIZE) / real(2)))) <= from_mem(data_width - 1 downto 0);
-                    nn_input(TO_INTEGER(i + 1) + integer(ceil(real(INPUT_SIZE) / real(2)))) <= from_mem(data_width * 2 - 1 downto data_width);
+                    nn_input(TO_INTEGER(i) + integer(ceil(real(INPUT_SIZE) / real(2)))) <= signed(from_mem(data_width - 1 downto 0));
+                    nn_input(TO_INTEGER(i + 1) + integer(ceil(real(INPUT_SIZE) / real(2)))) <= signed(from_mem(data_width * 2 - 1 downto data_width));
                 end if;
                 
                 if next_stack_ptr = stack_target then
