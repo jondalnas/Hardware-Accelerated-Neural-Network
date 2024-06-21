@@ -67,6 +67,7 @@ begin
         )
         port map (
             clk => clk,
+            rst => rst,
             valid_in => Block386_valid_in,
             valid_out => Block386_valid_out,
             a => Block386_i_0,
@@ -99,6 +100,7 @@ begin
         )
         port map (
             clk => clk,
+            rst => rst,
             valid_in => Convolution28_valid_in,
             valid_out => Convolution28_valid_out,
             x => Convolution28_i_0,
@@ -112,6 +114,7 @@ begin
         )
         port map (
             clk => clk,
+            rst => rst,
             valid_in => Plus30_valid_in,
             valid_out => Plus30_valid_out,
             a => Plus30_i_0,
@@ -135,6 +138,7 @@ begin
         )
         port map (
             clk => clk,
+            rst => rst,
             valid_in => ReLU32_valid_in,
             valid_out => ReLU32_valid_out,
             x => ReLU32_i_0,
@@ -154,6 +158,7 @@ begin
         )
         port map (
             clk => clk,
+            rst => rst,
             valid_in => Pooling66_valid_in,
             valid_out => Pooling66_valid_out,
             x => Pooling66_i_0,
@@ -175,6 +180,7 @@ begin
         )
         port map (
             clk => clk,
+            rst => rst,
             valid_in => Convolution110_valid_in,
             valid_out => Convolution110_valid_out,
             x => Convolution110_i_0,
@@ -188,6 +194,7 @@ begin
         )
         port map (
             clk => clk,
+            rst => rst,
             valid_in => Plus112_valid_in,
             valid_out => Plus112_valid_out,
             a => Plus112_i_0,
@@ -211,6 +218,7 @@ begin
         )
         port map (
             clk => clk,
+            rst => rst,
             valid_in => ReLU114_valid_in,
             valid_out => ReLU114_valid_out,
             x => ReLU114_i_0,
@@ -230,6 +238,7 @@ begin
         )
         port map (
             clk => clk,
+            rst => rst,
             valid_in => Pooling160_valid_in,
             valid_out => Pooling160_valid_out,
             x => Pooling160_i_0,
@@ -247,6 +256,7 @@ begin
         )
         port map (
             clk => clk,
+            rst => rst,
             valid_in => Times212_valid_in,
             valid_out => Times212_valid_out,
             a => Times212_i_0,
@@ -260,6 +270,7 @@ begin
         )
         port map (
             clk => clk,
+            rst => rst,
             valid_in => Plus214_valid_in,
             valid_out => Plus214_valid_out,
             a => Plus214_i_0,
