@@ -31,7 +31,7 @@ entity conv is
 end conv;
 
 architecture Behavioral of conv is
-	type res_array is array(y_size - 1 downto 0) of array_type(kernel_size - 1 downto 0)(data_width - 1 downto 0);
+	type res_array is array(y_size - 1 downto 0) of array_type(kernel_size * dimensions_x(2) - 1 downto 0)(data_width - 1 downto 0);
 	signal res : res_array;
 
 	constant x_offs : integer := integer(ceil(real(kernel_shape(0) * dilation(0) - (dilation(0) - 1)) / 2)) - 1;
@@ -45,7 +45,7 @@ architecture Behavioral of conv is
     signal mult_in_a : signed(data_width - 1 downto 0);
     signal mult_in_b : signed(data_width - 1 downto 0);
     signal mult_out : signed(data_width - 1 downto 0);
-    signal sum_in : array_type(kernel_size - 1 downto 0)(data_width - 1 downto 0);
+    signal sum_in : array_type(kernel_size * dimensions_x(2) - 1 downto 0)(data_width - 1 downto 0);
     signal sum_out : signed(data_width - 1 downto 0);
     
     signal next_out_array, out_array : array_type(y_size - 1 downto 0)(data_width - 1 downto 0);
@@ -110,7 +110,7 @@ begin
                 mult_in_a <= mult_a(index_sum)(index);
                 mult_in_b <= mult_b(index_sum)(index);
                 res(index_sum)(index) <= mult_out;
-                if index = kernel_size - 1 then
+                if index = kernel_size * dimensions_x(2) - 1 then
                     next_state <= SUM;
                 else
                     next_state <= MULT;
@@ -169,7 +169,7 @@ begin
     sum1 : entity work.sum
         generic map(
             data_width => data_width,
-            num_inputs => kernel_size
+            num_inputs => kernel_size * dimensions_x(2)
         )
         port map(
             a => sum_in,

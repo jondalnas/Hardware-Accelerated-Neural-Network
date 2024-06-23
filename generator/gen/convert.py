@@ -153,7 +153,8 @@ def get_instructions(params: ModelParams) -> str:
     return res
 
 def get_input_size(params: ModelParams) -> str:
-    return f"    constant INPUT_SIZE : Integer := {params.nn_input_size};\n"
+    return (f"    constant INPUT_SIZE : Integer := {params.nn_input_size};\n"
+            f"    constant OUTPUT_SIZE : Integer := {params.nn_output_size};\n")
 
 def get_nn_sizes(params: ModelParams) -> str:
     return (f"    constant NN_INPUT : Integer := {params.max_input};\n"

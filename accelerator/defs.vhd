@@ -5,6 +5,7 @@ use work.types.all;
 package defs is
     constant INSTRUCTIONS : instr_type(1 downto 0)(18 downto 0) := ("0000000000001010010", "0000000000000000000");
     constant INPUT_SIZE : Integer := 784;
+    constant OUTPUT_SIZE : Integer := 10;
     constant DATA_WIDTH : Integer := 16;
     constant INTEGER_WIDTH : Integer := 1;
     constant DECIMAL_WIDTH : Integer := DATA_WIDTH - INTEGER_WIDTH;

@@ -687,6 +687,7 @@ class ModelParams:
     max_output: int
     max_input: int
     nn_input_size: int
+    nn_output_size: int
 
 class Model:
     nodes: list[Node] = []
@@ -839,9 +840,13 @@ class Model:
         res = []
 
         input_nn_size = 0
+        output_nn_size = 0
 
         for i in self.inputs:
             input_nn_size += i.calc_output_node_size()
+
+        for o in self.outputs:
+            output_nn_size += o.calc_input_node_size(input_nn_size)
 
         max_feedback = 0
         max_output = 0
@@ -904,7 +909,7 @@ class Model:
         if isinstance(instr[-1], tuple):
             mem_instr.append(instr[-1])
 
-        return ModelParams(res, operators, mem_instr, max_feedback, max_output, max_input, input_nn_size)
+        return ModelParams(res, operators, mem_instr, max_feedback, max_output, max_input, input_nn_size, output_nn_size)
 
     def __repr__(self) -> str:
         res = ""

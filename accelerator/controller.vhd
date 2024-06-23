@@ -12,6 +12,8 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+use work.defs.all;
+
 entity controller is
     generic(
         MEMORY_ADDR_SIZE : integer := 16
@@ -39,9 +41,9 @@ architecture rtl of controller is
     constant ADDR_COUNT_SIZE           : integer                                := MEMORY_ADDR_SIZE; -- The size of the memory address counter
     constant ADDR_COUNT_MIN            : unsigned(ADDR_COUNT_SIZE - 1 downto 0) := to_unsigned(0, ADDR_COUNT_SIZE); -- Initial address of the memory
     constant ADDR_COUNT_DOWNLOAD_START : unsigned(ADDR_COUNT_SIZE - 1 downto 0) := to_unsigned(0, ADDR_COUNT_SIZE); -- First pixel address of the memory for the download image
-    constant ADDR_COUNT_DOWNLOAD_END   : unsigned(ADDR_COUNT_SIZE - 1 downto 0) := to_unsigned(28*28/2-1, ADDR_COUNT_SIZE); -- Last pixel address of the memory for the download image
-    constant ADDR_COUNT_UPLOAD_START   : unsigned(ADDR_COUNT_SIZE - 1 downto 0) := to_unsigned(28*28/2, ADDR_COUNT_SIZE); -- First pixel address of the memory for the upload image
-    constant ADDR_COUNT_UPLOAD_END     : unsigned(ADDR_COUNT_SIZE - 1 downto 0) := to_unsigned(28*28/2+10/2-1, ADDR_COUNT_SIZE); -- Last pixel address of the memory for the upload image
+    constant ADDR_COUNT_DOWNLOAD_END   : unsigned(ADDR_COUNT_SIZE - 1 downto 0) := to_unsigned(INPUT_SIZE/2-1, ADDR_COUNT_SIZE); -- Last pixel address of the memory for the download image
+    constant ADDR_COUNT_UPLOAD_START   : unsigned(ADDR_COUNT_SIZE - 1 downto 0) := to_unsigned(INPUT_SIZE/2, ADDR_COUNT_SIZE); -- First pixel address of the memory for the upload image
+    constant ADDR_COUNT_UPLOAD_END     : unsigned(ADDR_COUNT_SIZE - 1 downto 0) := to_unsigned(INPUT_SIZE/2+OUTPUT_SIZE/2-1, ADDR_COUNT_SIZE); -- Last pixel address of the memory for the upload image
     constant ADDR_COUNT_MAX            : unsigned(ADDR_COUNT_SIZE - 1 downto 0) := to_unsigned(65535, ADDR_COUNT_SIZE); -- Final address of the memory
 
     type state_type is (START, WAIT_AND_CHECK_COMMAND, REPLY_TEST, CLEAR,
