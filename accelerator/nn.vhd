@@ -107,176 +107,176 @@ begin
             w => Convolution28_i_1,
             y => Convolution28_o
         );
-    Plus30 : entity work.add
-        generic map (
-            input_size => 6272,
-            data_width => 16
-        )
-        port map (
-            clk => clk,
-            rst => rst,
-            valid_in => Plus30_valid_in,
-            valid_out => Plus30_valid_out,
-            a => Plus30_i_0,
-            b => Plus30_bc_i_1,
-            c => Plus30_o
-        );
-    Plus30_1_bc : entity work.broad
-        generic map(
-            input_size => 8,
-            output_size => 6272,
-            data_width => 16
-        )
-        port map(
-            input => Plus30_i_1,
-            output => Plus30_bc_i_1
-        );
-    ReLU32 : entity work.relu
-        generic map (
-            input_size => 6272,
-            data_width => 16
-        )
-        port map (
-            clk => clk,
-            rst => rst,
-            valid_in => ReLU32_valid_in,
-            valid_out => ReLU32_valid_out,
-            x => ReLU32_i_0,
-            y => ReLU32_o
-        );
-    Pooling66 : entity work.max_pool
-        generic map (
-            num_dimensions => 4,
-            kernel_shape => (2, 2),
-            pads => (0, 0, 0, 0),
-            strides => (2, 2),
-            in_dimensions => (1, 8, 28, 28),
-            out_dimensions => (1, 8, 14, 14),
-            input_size => 6272,
-            output_size => 1568,
-            data_width => 16
-        )
-        port map (
-            clk => clk,
-            rst => rst,
-            valid_in => Pooling66_valid_in,
-            valid_out => Pooling66_valid_out,
-            x => Pooling66_i_0,
-            y => Pooling66_o
-        );
-    Convolution110 : entity work.conv
-        generic map (
-            num_dimensions => 4,
-            dimensions_x => (1, 8, 14, 14),
-            x_size => 1568,
-            dimensions_w => (16, 8, 5, 5),
-            w_size => 3200,
-            kernel_shape => (5, 5),
-            kernel_size => 25,
-            dilation => (1, 1),
-            stride => (1, 1),
-            data_width => 16,
-            y_size => 3136
-        )
-        port map (
-            clk => clk,
-            rst => rst,
-            valid_in => Convolution110_valid_in,
-            valid_out => Convolution110_valid_out,
-            x => Convolution110_i_0,
-            w => Convolution110_i_1,
-            y => Convolution110_o
-        );
-    Plus112 : entity work.add
-        generic map (
-            input_size => 3136,
-            data_width => 16
-        )
-        port map (
-            clk => clk,
-            rst => rst,
-            valid_in => Plus112_valid_in,
-            valid_out => Plus112_valid_out,
-            a => Plus112_i_0,
-            b => Plus112_bc_i_1,
-            c => Plus112_o
-        );
-    Plus112_1_bc : entity work.broad
-        generic map(
-            input_size => 16,
-            output_size => 3136,
-            data_width => 16
-        )
-        port map(
-            input => Plus112_i_1,
-            output => Plus112_bc_i_1
-        );
-    ReLU114 : entity work.relu
-        generic map (
-            input_size => 3136,
-            data_width => 16
-        )
-        port map (
-            clk => clk,
-            rst => rst,
-            valid_in => ReLU114_valid_in,
-            valid_out => ReLU114_valid_out,
-            x => ReLU114_i_0,
-            y => ReLU114_o
-        );
-    Pooling160 : entity work.max_pool
-        generic map (
-            num_dimensions => 4,
-            kernel_shape => (3, 3),
-            pads => (0, 0, 0, 0),
-            strides => (3, 3),
-            in_dimensions => (1, 16, 14, 14),
-            out_dimensions => (1, 16, 4, 4),
-            input_size => 3136,
-            output_size => 256,
-            data_width => 16
-        )
-        port map (
-            clk => clk,
-            rst => rst,
-            valid_in => Pooling160_valid_in,
-            valid_out => Pooling160_valid_out,
-            x => Pooling160_i_0,
-            y => Pooling160_o
-        );
-    Times212 : entity work.mat_mul
-        generic map (
-            num_dimensions => 2,
-            a_dim => (1, 256),
-            b_dim => (256, 10),
-            a_size => 256,
-            b_size => 2560,
-            y_size => 10,
-            data_width => 16
-        )
-        port map (
-            clk => clk,
-            rst => rst,
-            valid_in => Times212_valid_in,
-            valid_out => Times212_valid_out,
-            a => Times212_i_0,
-            b => Times212_i_1,
-            y => Times212_o
-        );
-    Plus214 : entity work.add
-        generic map (
-            input_size => 10,
-            data_width => 16
-        )
-        port map (
-            clk => clk,
-            rst => rst,
-            valid_in => Plus214_valid_in,
-            valid_out => Plus214_valid_out,
-            a => Plus214_i_0,
-            b => Plus214_i_1,
-            c => Plus214_o
-        );
+--    Plus30 : entity work.add
+--        generic map (
+--            input_size => 6272,
+--            data_width => 16
+--        )
+--        port map (
+--            clk => clk,
+--            rst => rst,
+--            valid_in => Plus30_valid_in,
+--            valid_out => Plus30_valid_out,
+--            a => Plus30_i_0,
+--            b => Plus30_bc_i_1,
+--            c => Plus30_o
+--        );
+--    Plus30_1_bc : entity work.broad
+--        generic map(
+--            input_size => 8,
+--            output_size => 6272,
+--            data_width => 16
+--        )
+--        port map(
+--            input => Plus30_i_1,
+--            output => Plus30_bc_i_1
+--        );
+--    ReLU32 : entity work.relu
+--        generic map (
+--            input_size => 6272,
+--            data_width => 16
+--        )
+--        port map (
+--            clk => clk,
+--            rst => rst,
+--            valid_in => ReLU32_valid_in,
+--            valid_out => ReLU32_valid_out,
+--            x => ReLU32_i_0,
+--            y => ReLU32_o
+--        );
+--    Pooling66 : entity work.max_pool
+--        generic map (
+--            num_dimensions => 4,
+--            kernel_shape => (2, 2),
+--            pads => (0, 0, 0, 0),
+--            strides => (2, 2),
+--            in_dimensions => (1, 8, 28, 28),
+--            out_dimensions => (1, 8, 14, 14),
+--            input_size => 6272,
+--            output_size => 1568,
+--            data_width => 16
+--        )
+--        port map (
+--            clk => clk,
+--            rst => rst,
+--            valid_in => Pooling66_valid_in,
+--            valid_out => Pooling66_valid_out,
+--            x => Pooling66_i_0,
+--            y => Pooling66_o
+--        );
+--    Convolution110 : entity work.conv
+--        generic map (
+--            num_dimensions => 4,
+--            dimensions_x => (1, 8, 14, 14),
+--            x_size => 1568,
+--            dimensions_w => (16, 8, 5, 5),
+--            w_size => 3200,
+--            kernel_shape => (5, 5),
+--            kernel_size => 25,
+--            dilation => (1, 1),
+--            stride => (1, 1),
+--            data_width => 16,
+--            y_size => 3136
+--        )
+--        port map (
+--            clk => clk,
+--            rst => rst,
+--            valid_in => Convolution110_valid_in,
+--            valid_out => Convolution110_valid_out,
+--            x => Convolution110_i_0,
+--            w => Convolution110_i_1,
+--            y => Convolution110_o
+--        );
+--    Plus112 : entity work.add
+--        generic map (
+--            input_size => 3136,
+--            data_width => 16
+--        )
+--        port map (
+--            clk => clk,
+--            rst => rst,
+--            valid_in => Plus112_valid_in,
+--            valid_out => Plus112_valid_out,
+--            a => Plus112_i_0,
+--            b => Plus112_bc_i_1,
+--            c => Plus112_o
+--        );
+--    Plus112_1_bc : entity work.broad
+--        generic map(
+--            input_size => 16,
+--            output_size => 3136,
+--            data_width => 16
+--        )
+--        port map(
+--            input => Plus112_i_1,
+--            output => Plus112_bc_i_1
+--        );
+--    ReLU114 : entity work.relu
+--        generic map (
+--            input_size => 3136,
+--            data_width => 16
+--        )
+--        port map (
+--            clk => clk,
+--            rst => rst,
+--            valid_in => ReLU114_valid_in,
+--            valid_out => ReLU114_valid_out,
+--            x => ReLU114_i_0,
+--            y => ReLU114_o
+--        );
+--    Pooling160 : entity work.max_pool
+--        generic map (
+--            num_dimensions => 4,
+--            kernel_shape => (3, 3),
+--            pads => (0, 0, 0, 0),
+--            strides => (3, 3),
+--            in_dimensions => (1, 16, 14, 14),
+--            out_dimensions => (1, 16, 4, 4),
+--            input_size => 3136,
+--            output_size => 256,
+--            data_width => 16
+--        )
+--        port map (
+--            clk => clk,
+--            rst => rst,
+--            valid_in => Pooling160_valid_in,
+--            valid_out => Pooling160_valid_out,
+--            x => Pooling160_i_0,
+--            y => Pooling160_o
+--        );
+--    Times212 : entity work.mat_mul
+--        generic map (
+--            num_dimensions => 2,
+--            a_dim => (1, 256),
+--            b_dim => (256, 10),
+--            a_size => 256,
+--            b_size => 2560,
+--            y_size => 10,
+--            data_width => 16
+--        )
+--        port map (
+--            clk => clk,
+--            rst => rst,
+--            valid_in => Times212_valid_in,
+--            valid_out => Times212_valid_out,
+--            a => Times212_i_0,
+--            b => Times212_i_1,
+--            y => Times212_o
+--        );
+--    Plus214 : entity work.add
+--        generic map (
+--            input_size => 10,
+--            data_width => 16
+--        )
+--        port map (
+--            clk => clk,
+--            rst => rst,
+--            valid_in => Plus214_valid_in,
+--            valid_out => Plus214_valid_out,
+--            a => Plus214_i_0,
+--            b => Plus214_i_1,
+--            c => Plus214_o
+--        );
 
     Block386_i_1 <= (0 => "0111111111111111");
     Convolution28_i_1 <= ("1110011110100011", "1101101110001110", "1100100101000111", "1110011110110100", "1111101101101011", "1011111110110110", "1110011010111000", "1111000010001011", "1110111000110001", "0000001110100001", "0001000100011011", "0000011000011101", "0001000011110111", "0001100100010101", "1111000011100110", "0100100010011000", "0010100001010111", "0001100011110110", "0011000000110000", "0001010100100000", "0010101101111100", "0001110110100101", "0000101110111100", "1110111100011011", "1111110100101101", "1111101000010111", "0001000100101100", "0000100100010010", "0001011111001000", "0010110010100001", "1110110010001011", "1101001011111101", "1110100111110010", "0000111010100101", "0010001110010111", "1111010010001010", "1101100100011010", "1100010101100100", "0010011001100110", "0011010100011100", "1110000001010001", "1100100100010000", "1100101111010010", "0011111001011000", "0010111010100100", "1110010011100011", "1100010101101011", "1110010010001110", "0100011110011101", "0000110010001010", "0001110010010100", "0011110000001101", "0001111001010101", "0010011011000011", "0000011110110101", "1111000111111010", "0001000010001111", "0010111010110001", "0101010001010111", "0001110000101101", "1110010100000001", "1101001110100101", "1101111110110101", "0010110001001101", "0100010100101000", "1100111011010010", "1011010010110100", "1010001000100100", "1011100111011001", "0001011101101000", "0001001000011111", "0000011011011001", "1110011110000111", "1101010101000110", "1110101011000000", "0001111000110111", "0101011101110101", "0101000000010100", "0001111110000000", "0000000100111101", "1111111010000110", "0000010101110011", "0010001101101100", "0001001000110000", "1111000100110110", "1011011111001110", "1100001100110110", "1111111000100110", "0011010010001001", "1111100001001011", "1011100000001110", "1110001100011110", "1110101111111101", "0001101000111100", "0000101101100101", "1110101101011111", "1110001100011011", "1111111110110010", "1111000001100001", "1110010010001010", "0010101110011100", "0001101011000111", "0000001110111000", "0010110011110001", "0010100111101100", "0001011100110000", "1111111010010001", "0001110000010100", "0010111110011110", "0000110000011001", "0001110100110000", "0000010101101101", "0000111111000111", "1111110011111110", "1100110111011100", "0001010010111011", "0001010011110101", "1111100010100011", "1110010100001000", "1100001011111010", "1110001110001000", "1111010111011101", "1101011000000101", "1101010101110100", "1101101000110010", "1111011111011101", "1110110101001111", "1101001101010010", "1101010101010101", "1110011010001000", "1100011010011010", "1011000100001110", "1011101100011100", "1010010001100111", "1000001110000000", "1110000001101010", "1110100111001001", "1110110110000001", "1111011001000111", "1100001111110110", "0001111100011011", "0010101000101010", "0011000101000010", "0011010101100000", "0010101011011110", "0101100001110001", "0010111001001110", "0010000001110110", "0000110101100000", "1111110011111000", "0010010001110111", "1111111000100011", "1111011110000110", "1110001010100001", "1100111101000011", "0010101010010111", "0001110100110000", "1110100111000101", "1100111010100001", "1011011101010111", "0010111110110010", "0010110111110011", "1110101110100111", "1101011000101111", "1110110010110010", "0011001110100010", "0100001101111010", "1111111101110000", "1101110010001111", "1111001100001101", "0000011000110110", "0011011000111010", "0011111111010110", "0001101111111011", "1111101011100110", "1101101010101010", "1100001011101100", "1110010000000111", "0001110011101110", "0000010011101101", "1011000110000100", "1101101001000110", "0100101111001001", "0100011101011101", "1110101110010101", "1100011101111000", "0100011100000000", "0111111111111111", "0000011100011110", "1100000100001110", "0010000110111001", "0110001001010100", "1111100110101111", "1100001100101010", "1011010000111011", "0001001000100110", "1111011110111101", "1011111011011111", "1110000110101110", "1111111011011101");

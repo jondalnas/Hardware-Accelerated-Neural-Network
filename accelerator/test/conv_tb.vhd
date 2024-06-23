@@ -28,7 +28,7 @@ begin
             dimensions_x => (1, 1, 3, 3),
             dimensions_w => (2, 1, 3, 3),
             kernel_shape => (3, 3),
-            dilation => (2, 2),
+            dilation => (1, 1),
             stride => (1, 1)
         )
         port map(
