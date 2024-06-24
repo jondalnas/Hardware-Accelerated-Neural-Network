@@ -29,11 +29,12 @@ end max_pool;
 
 architecture FSM of max_pool is
     --TODO : add padding
-    type kernel_array_type is array(0 to output_size - 1) of array_type(0 to kernel_shape(0) * kernel_shape(1) - 1)(data_width - 1 downto 0);
-    signal kernels : kernel_array_type;
+    signal kernels : array_type(0 to kernel_shape(0) * kernel_shape(1) - 1)(data_width - 1 downto 0);
  
     constant x_offs : integer := integer(ceil(real(kernel_shape(0)) / 2.0)) - 1;
     constant y_offs : integer := integer(ceil(real(kernel_shape(1)) / 2.0)) - 1;
+
+    constant MIN_VALUE : signed(data_width - 1 downto 0) := '1' & (data_width - 2 downto 0 => '0');
 
     type state_type is (START, DONE, CALC);
     signal state, next_state : state_type;
@@ -43,25 +44,44 @@ architecture FSM of max_pool is
     
     signal next_out_array, out_array : array_type(output_size - 1 downto 0)(data_width - 1 downto 0);
     
-    signal next_index, index : integer;
+    signal next_index, index : integer := 0;
+    signal next_index_xx, index_xx : integer := 0;
+    signal next_index_xx_strides, index_xx_strides : integer := 0;
+    signal next_index_yy_strides, index_yy_strides : integer := 0;
+    signal next_index_color_layer, index_color_layer : integer := 0;
 
 begin
 
     im_gen : if num_dimensions = 4 generate -- Generate hardware for the specific 4 dimension case
-        batch_gen : for n in 0 to in_dimensions(3) - 1 generate
-            channel_gen : for c in 0 to in_dimensions(2) - 1 generate
-                y_gen : for yy in 0 to out_dimensions(1) - 1 generate
-                    x_gen : for xx in 0 to out_dimensions(0) - 1 generate
-                        kern_y_gen : for ky in 0 to kernel_shape(1) - 1 generate
-                            kern_x_gen : for kx in 0 to kernel_shape(0) - 1 generate
-                                oob : if (yy*strides(1) + ky - y_offs < 0) or (xx*strides(0) + kx - x_offs < 0) or (yy*strides(1) + ky - y_offs >= in_dimensions(0)) or (xx*strides(0) + kx - x_offs >= in_dimensions(1)) generate
-                                    kernels(xx+yy*out_dimensions(0) + c*out_dimensions(1)*out_dimensions(0)+n*out_dimensions(2)*out_dimensions(1)*out_dimensions(0))(kx + ky * kernel_shape(0)) <= '1' & (data_width - 2 downto 0 => '0');
-                                else generate
-                                    kernels(xx+yy*out_dimensions(0) + c*out_dimensions(1)*out_dimensions(0)+n*out_dimensions(2)*out_dimensions(1)*out_dimensions(0))(kx + ky * kernel_shape(0)) <= x(xx*strides(0) + kx - x_offs + (yy*strides(1) + ky - y_offs)*in_dimensions(0) + c*in_dimensions(1)*in_dimensions(0)+n*in_dimensions(2)*in_dimensions(1)*in_dimensions(0));
-                                end generate;
-                            end generate;
-                        end generate;
-                    end generate;
+        kern_y_gen : for ky in 0 to kernel_shape(1) - 1 generate
+            kern_x_gen : for kx in 0 to kernel_shape(0) - 1 generate
+                oob : if (kx - x_offs < 0) and (ky - y_offs < 0) generate
+                    kernels(kx + ky * kernel_shape(0)) <= x(index_xx_strides + index_yy_strides + kx - x_offs + (ky - y_offs) * in_dimensions(0) + index_color_layer) when (index_xx_strides + kx - x_offs >= 0) and (index_yy_strides + (ky - y_offs) * in_dimensions(0) >= 0) else MIN_VALUE;
+
+                elsif (kx - x_offs > 0) and (ky - y_offs < 0) generate
+                    kernels(kx + ky * kernel_shape(0)) <= x(index_xx_strides + index_yy_strides + kx - x_offs + (ky - y_offs) * in_dimensions(0) + index_color_layer) when (index_xx_strides + kx - x_offs < in_dimensions(0)) and (index_yy_strides + (ky - y_offs) * in_dimensions(0) >= 0) else MIN_VALUE;
+
+                elsif (kx - x_offs < 0) and (ky - y_offs > 0) generate
+                    kernels(kx + ky * kernel_shape(0)) <= x(index_xx_strides + index_yy_strides + kx - x_offs + (ky - y_offs) * in_dimensions(0) + index_color_layer) when (index_xx_strides + kx - x_offs >= 0) and (index_yy_strides + (ky - y_offs) * in_dimensions(0) < in_dimensions(1) * in_dimensions(0)) else MIN_VALUE;
+
+                elsif (kx - x_offs > 0) and (ky - y_offs > 0) generate
+                    kernels(kx + ky * kernel_shape(0)) <= x(index_xx_strides + index_yy_strides + kx - x_offs + (ky - y_offs) * in_dimensions(0) + index_color_layer) when (index_xx_strides + kx - x_offs < in_dimensions(0)) and (index_yy_strides + (ky - y_offs) * in_dimensions(0) < in_dimensions(1) * in_dimensions(0)) else MIN_VALUE;
+
+                elsif kx - x_offs < 0 generate
+                    kernels(kx + ky * kernel_shape(0)) <= x(index_xx_strides + index_yy_strides + kx - x_offs + index_color_layer) when (index_xx_strides + kx - x_offs >= 0) else MIN_VALUE;
+
+                elsif kx - x_offs > 0 generate
+                    kernels(kx + ky * kernel_shape(0)) <= x(index_xx_strides + index_yy_strides + kx - x_offs + index_color_layer) when (index_xx_strides + kx - x_offs < in_dimensions(0)) else MIN_VALUE;
+
+                elsif ky - y_offs < 0 generate
+                    kernels(kx + ky * kernel_shape(0)) <= x(index_xx_strides + index_yy_strides + (ky - y_offs) * in_dimensions(0) + index_color_layer) when (index_yy_strides + (ky - y_offs) * in_dimensions(0) >= 0) else MIN_VALUE;
+
+                elsif ky - y_offs > 0 generate
+                    kernels(kx + ky * kernel_shape(0)) <= x(index_xx_strides + index_yy_strides + (ky - y_offs) * in_dimensions(0) + index_color_layer) when (index_yy_strides + (ky - y_offs) * in_dimensions(0) < in_dimensions(1) * in_dimensions(0)) else MIN_VALUE;
+
+                else generate
+                    kernels(kx + ky * kernel_shape(0)) <= x(index_xx_strides + index_yy_strides + index_color_layer);
+
                 end generate;
             end generate;
         end generate;
@@ -74,11 +94,13 @@ begin
         max_in <= (others => (others => '0'));
         next_index <= 0;
         next_state <= state;
+        next_index_xx <= index_xx;
+        next_index_xx_strides <= index_xx_strides;
+        next_index_yy_strides <= index_yy_strides;
+        next_index_color_layer <= index_color_layer;
         
         case state is
             when START =>
-                next_index <= 0;
-                valid_out <= '0';
                 if valid_in then
                     next_state <= CALC;
                 else 
@@ -87,15 +109,26 @@ begin
             
             when CALC => 
                 next_index <= index + 1;
-                max_in <= kernels(index);
+                next_index_xx <= index_xx + 1;
+                next_index_xx_strides <= index_xx_strides + strides(0);
+
                 next_out_array(index) <= max_out;
+
                 if index = output_size - 1 then
                     next_state <= DONE;
-                else
-                    next_state <= CALC;
+                    next_index <= 0;
+                    next_index_xx <= 0;
+                    next_index_xx_strides <= 0;
+                    next_index_yy_strides <= 0;
+
+                elsif index_xx = in_dimensions(0) - 2 then
+                    next_index_xx <= 0;
+                    next_index_xx_strides <= 0;
+                    next_index_yy_strides <= index_yy_strides + strides(1) * in_dimensions(0);
+
                 end if;
+
             when DONE =>
-                next_index <= 0;
                 valid_out <= '1';
                 if not valid_in then
                     next_state <= START;
@@ -112,10 +145,18 @@ begin
             if rst then
                 state <= START;
                 index <= 0;
+                index_xx <= 0;
+                index_xx_strides <= 0;
+                index_yy_strides <= 0;
+                index_color_layer <= 0;
                 out_array <= (others => (others => '0'));
             else
                 state <= next_state;
                 index <= next_index;
+                index_xx <= next_index_xx;
+                index_xx_strides <= next_index_xx_strides;
+                index_yy_strides <= next_index_yy_strides;
+                index_color_layer <= next_index_color_layer;
                 out_array <= next_out_array;
             end if;
         end if;
@@ -130,7 +171,7 @@ begin
             num_inputs => kernel_shape(0) * kernel_shape(1)
         )
         port map(
-            a => max_in,
+            a => kernels,
             c => max_out
         );
 
