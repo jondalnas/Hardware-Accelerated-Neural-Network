@@ -27,7 +27,10 @@ entity memory_fsm is
         from_mem    : in std_logic_vector(2 * data_width - 1 downto 0);
         mem_en      : out std_logic;
         mem_we      : out std_logic;
-        mem_addr    : out std_logic_vector(MEMORY_ADDR_SIZE-1 downto 0)
+        mem_addr    : out std_logic_vector(MEMORY_ADDR_SIZE-1 downto 0);
+        
+        --testing
+        curr_inst : out unsigned(INSTRUCTIONS'range)
     );
 end memory_fsm;
 
@@ -44,6 +47,8 @@ architecture Behavioral of memory_fsm is
     signal next_inst_count, inst_count : unsigned(INSTRUCTIONS'range) := TO_UNSIGNED(0, INSTRUCTIONS'length);
     signal next_stack_ptr, stack_ptr : std_logic_vector(MEMORY_ADDR_SIZE - 1 downto 0) := STACK_START;
     signal stack_target : std_logic_vector(MEMORY_ADDR_SIZE - 1 downto 0);
+    
+    signal next_to_nn, to_nn : array_type(nn_num_in - 1 downto 0)(data_width - 1 downto 0);
 
 begin
 
@@ -51,7 +56,7 @@ begin
     begin
         led <= '0';
         next_i <= TO_UNSIGNED(0, MEMORY_ADDR_SIZE);
-        nn_input <= nn_input;
+        next_to_nn <= to_nn;
     
         case state is
             when START =>
@@ -78,8 +83,8 @@ begin
             when INPUT_SEND =>
                 valid_out <= '0';
                 mem_en <= '0';
-                nn_input(TO_INTEGER(i)) <= signed(from_mem(data_width - 1 downto 0));
-                nn_input(TO_INTEGER(i +1)) <= signed(from_mem(data_width * 2 - 1 downto data_width));
+                next_to_nn(TO_INTEGER(i)) <= signed(from_mem(data_width - 1 downto 0));
+                next_to_nn(TO_INTEGER(i +1)) <= signed(from_mem(data_width * 2 - 1 downto data_width));
                 next_i <= i + 2;
                 if (i = TO_UNSIGNED(nn_num_in - 2, i'length)) and (not (inst = 4)) then
                     next_state <= WAIT_DONE;
@@ -150,11 +155,11 @@ begin
                 next_stack_ptr <= stack_ptr - 1;
                 next_i <= i + 2;
                 
-                nn_input(TO_INTEGER(i)) <= signed(from_mem(data_width - 1 downto 0));
-                nn_input(TO_INTEGER(i + 1)) <= signed(from_mem(data_width * 2 - 1 downto data_width));
+                next_to_nn(TO_INTEGER(i)) <= signed(from_mem(data_width - 1 downto 0));
+                next_to_nn(TO_INTEGER(i + 1)) <= signed(from_mem(data_width * 2 - 1 downto data_width));
                 if inst = 4 then 
-                    nn_input(TO_INTEGER(i) + integer(ceil(real(INPUT_SIZE) / real(2)))) <= signed(from_mem(data_width - 1 downto 0));
-                    nn_input(TO_INTEGER(i + 1) + integer(ceil(real(INPUT_SIZE) / real(2)))) <= signed(from_mem(data_width * 2 - 1 downto data_width));
+                    next_to_nn(TO_INTEGER(i) + integer(ceil(real(INPUT_SIZE) / real(2)))) <= signed(from_mem(data_width - 1 downto 0));
+                    next_to_nn(TO_INTEGER(i + 1) + integer(ceil(real(INPUT_SIZE) / real(2)))) <= signed(from_mem(data_width * 2 - 1 downto data_width));
                 end if;
                 
                 if next_stack_ptr = stack_target then
@@ -183,13 +188,17 @@ begin
                 i <= TO_UNSIGNED(0, MEMORY_ADDR_SIZE);
                 stack_ptr <= STACK_START;
                 inst_count <= TO_UNSIGNED(0, INSTRUCTIONS'length);
+                to_nn <= (others => (others => '0'));
             else 
                 state <= next_state;
                 i <= next_i;
                 stack_ptr <= next_stack_ptr;
                 inst_count <= next_inst_count;
+                to_nn <= next_to_nn;
             end if;
         end if;
     end process;
+    
+    nn_input <= to_nn;
     
 end Behavioral;

@@ -1,5 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 use work.types.all;
 
@@ -78,5 +79,5 @@ begin
 		end if;
 	end process;
 
-	reslu_res <= x(index) when x(index)(data_width - 1) = '0' else (others => '0');
+	relu_res <= x(index) when x(index)(data_width - 1) = '0' else (others => '0');
 end Behavioral;

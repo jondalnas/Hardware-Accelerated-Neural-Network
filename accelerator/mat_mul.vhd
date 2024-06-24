@@ -27,7 +27,7 @@ end mat_mul;
 
 architecture Behavioral of mat_mul is
 	type res_array is array(y_size - 1 downto 0) of array_type(a_dim(0) - 1 downto 0)(data_width - 1 downto 0);
-	signal res : res_array;
+	signal next_res, res : array_type(a_dim(0) - 1 downto 0)(data_width - 1 downto 0);
 	
     type state_type is (START, DONE, SUM, MULT);
     signal state, next_state : state_type;
@@ -66,6 +66,7 @@ begin
         next_index <= 0;
         next_index_sum <= 0;
         next_state <= state;
+        next_res <= res;
         
         case state is
             when START =>
@@ -83,7 +84,7 @@ begin
                 next_index_sum <= index_sum;
                 mult_in_a <= mult_a(index_sum)(index);
                 mult_in_b <= mult_b(index_sum)(index);
-                res(index_sum)(index) <= mult_out;
+                next_res(index) <= mult_out;
                 if index = a_dim(0) - 1 then
                     next_state <= SUM;
                 else
@@ -92,7 +93,7 @@ begin
             when SUM => 
                 next_index_sum <= index_sum + 1;
                 next_index <= 0;
-                sum_in <= res(index_sum);
+                sum_in <= res;
                 next_out_array(index_sum) <= sum_out;
                 if index_sum = y_size - 1 then
                     next_state <= DONE;
@@ -119,11 +120,13 @@ begin
                 index <= 0;
                 index_sum <= 0;
                 out_array <= (others => (others => '0'));
+                res <= (others => (others => '0'));
             else
                 state <= next_state;
                 index <= next_index;
                 index_sum <= next_index_sum;
                 out_array <= next_out_array;
+                res <= next_res;
             end if;
         end if;
     end process;
