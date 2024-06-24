@@ -80,4 +80,5 @@ begin
 	end process;
 
 	relu_res <= x(index) when x(index)(data_width - 1) = '0' else (others => '0');
+	y <= res;
 end Behavioral;

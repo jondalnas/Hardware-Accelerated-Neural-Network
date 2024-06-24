@@ -293,33 +293,26 @@ begin
         valid_out <= '0';
         output <= (others => (others => '0'));
         Block386_i_0 <= (others => (others => '0'));
-        Block386_i_1 <= (others => (others => '0'));
         Block386_valid_in <= '0';
         Convolution28_i_0 <= (others => (others => '0'));
-        Convolution28_i_1 <= (others => (others => '0'));
         Convolution28_valid_in <= '0';
         Plus30_i_0 <= (others => (others => '0'));
-        Plus30_i_1 <= (others => (others => '0'));
         Plus30_valid_in <= '0';
         ReLU32_i_0 <= (others => (others => '0'));
         ReLU32_valid_in <= '0';
         Pooling66_i_0 <= (others => (others => '0'));
         Pooling66_valid_in <= '0';
         Convolution110_i_0 <= (others => (others => '0'));
-        Convolution110_i_1 <= (others => (others => '0'));
         Convolution110_valid_in <= '0';
         Plus112_i_0 <= (others => (others => '0'));
-        Plus112_i_1 <= (others => (others => '0'));
         Plus112_valid_in <= '0';
         ReLU114_i_0 <= (others => (others => '0'));
         ReLU114_valid_in <= '0';
         Pooling160_i_0 <= (others => (others => '0'));
         Pooling160_valid_in <= '0';
         Times212_i_0 <= (others => (others => '0'));
-        Times212_i_1 <= (others => (others => '0'));
         Times212_valid_in <= '0';
         Plus214_i_0 <= (others => (others => '0'));
-        Plus214_i_1 <= (others => (others => '0'));
         Plus214_valid_in <= '0';
 
         case state is
@@ -327,76 +320,77 @@ begin
                 next_state <= 0;
                 if valid_in then
                     next_state <= 1;
+					next_was_valid <= '1';
                 end if;
             when 1 =>
                 Block386_i_0 <= input(783 downto 0);
-                next_feedback(783 downto 0) <= Block386_o;
                 Block386_valid_in <= '1';
                 if Block386_valid_out then
                     next_state <= 2;
+                    next_feedback(783 downto 0) <= Block386_o;
                 end if;
             when 2 =>
                 Convolution28_i_0 <= feedback(783 downto 0);
-                next_feedback(6271 downto 0) <= Convolution28_o;
                 Convolution28_valid_in <= '1';
                 if Convolution28_valid_out then
                     next_state <= 3;
+                    next_feedback(6271 downto 0) <= Convolution28_o;
                 end if;
             when 3 =>
                 Plus30_i_0 <= feedback(6271 downto 0);
-                next_feedback(6271 downto 0) <= Plus30_o;
                 Plus30_valid_in <= '1';
                 if Plus30_valid_out then
                     next_state <= 4;
+                    next_feedback(6271 downto 0) <= Plus30_o;
                 end if;
             when 4 =>
                 ReLU32_i_0 <= feedback(6271 downto 0);
-                next_feedback(6271 downto 0) <= ReLU32_o;
                 ReLU32_valid_in <= '1';
                 if ReLU32_valid_out then
                     next_state <= 5;
+                    next_feedback(6271 downto 0) <= ReLU32_o;
                 end if;
             when 5 =>
                 Pooling66_i_0 <= feedback(6271 downto 0);
-                next_feedback(1567 downto 0) <= Pooling66_o;
                 Pooling66_valid_in <= '1';
                 if Pooling66_valid_out then
                     next_state <= 6;
+                    next_feedback(1567 downto 0) <= Pooling66_o;
                 end if;
             when 6 =>
                 Convolution110_i_0 <= feedback(1567 downto 0);
-                next_feedback(3135 downto 0) <= Convolution110_o;
                 Convolution110_valid_in <= '1';
                 if Convolution110_valid_out then
                     next_state <= 7;
+                    next_feedback(3135 downto 0) <= Convolution110_o;
                 end if;
             when 7 =>
                 Plus112_i_0 <= feedback(3135 downto 0);
-                next_feedback(3135 downto 0) <= Plus112_o;
                 Plus112_valid_in <= '1';
                 if Plus112_valid_out then
                     next_state <= 8;
+                    next_feedback(3135 downto 0) <= Plus112_o;
                 end if;
             when 8 =>
                 ReLU114_i_0 <= feedback(3135 downto 0);
-                next_feedback(3135 downto 0) <= ReLU114_o;
                 ReLU114_valid_in <= '1';
                 if ReLU114_valid_out then
                     next_state <= 9;
+                    next_feedback(3135 downto 0) <= ReLU114_o;
                 end if;
             when 9 =>
                 Pooling160_i_0 <= feedback(3135 downto 0);
-                next_feedback(255 downto 0) <= Pooling160_o;
                 Pooling160_valid_in <= '1';
                 if Pooling160_valid_out then
                     next_state <= 10;
+                    next_feedback(255 downto 0) <= Pooling160_o;
                 end if;
             when 10 =>
                 Times212_i_0 <= feedback(255 downto 0);
-                next_feedback(9 downto 0) <= Times212_o;
                 Times212_valid_in <= '1';
                 if Times212_valid_out then
                     next_state <= 11;
+                    next_feedback(9 downto 0) <= Times212_o;
                 end if;
             when others =>
                 Plus214_i_0 <= feedback(9 downto 0);
@@ -408,6 +402,7 @@ begin
                     valid_out <= '0';
                 elsif not was_valid then
                     next_was_valid <= '1';
+                    valid_out <= '0';
                     next_state <= 0;
                 end if;
         end case;

@@ -78,16 +78,16 @@ begin
 						mult_a(xxk + yyk * kernel_shape(0) + cc * kernel_shape(0) * kernel_shape(1)) <= x(index_xx_strided + index_yy_strided + (xxk * dilation(0) - x_offs) + (yyk * dilation(1) - y_offs) * dimensions_x(0) + cc * dimensions_x(0) * dimensions_x(1)) when (index_xx_strided + xxk * dilation(1) - x_offs < dimensions_x(0)) and (index_yy_strided + (yyk * dilation(1) - y_offs) * dimensions_x(0) * stride(1) < dimensions_x(1) * dimensions_x(0) * stride(1)) else (others => '0');
 
 					elsif xxk * dilation(1) - x_offs < 0 generate
-						mult_a(xxk + yyk * kernel_shape(0) + cc * kernel_shape(0) * kernel_shape(1)) <= x(index_xx_strided + index_yy_strided + (xxk * dilation(0) - x_offs) + cc * dimensions_x(0) * dimensions_x(1)) when index_xx * stride(0) + xxk * dilation(0) - x_offs >= 0 else (others => '0');
+						mult_a(xxk + yyk * kernel_shape(0) + cc * kernel_shape(0) * kernel_shape(1)) <= x(index_xx_strided + index_yy_strided + (xxk * dilation(0) - x_offs) + cc * dimensions_x(0) * dimensions_x(1)) when index_xx_strided + xxk * dilation(0) - x_offs >= 0 else (others => '0');
 
 					elsif xxk * dilation(1) - x_offs > 0 generate
-						mult_a(xxk + yyk * kernel_shape(0) + cc * kernel_shape(0) * kernel_shape(1)) <= x(index_xx_strided + index_yy_strided + (xxk * dilation(0) - x_offs) + cc * dimensions_x(0) * dimensions_x(1)) when index_xx * stride(0) + xxk * dilation(0) - x_offs < dimensions_x(0) else (others => '0');
+						mult_a(xxk + yyk * kernel_shape(0) + cc * kernel_shape(0) * kernel_shape(1)) <= x(index_xx_strided + index_yy_strided + (xxk * dilation(0) - x_offs) + cc * dimensions_x(0) * dimensions_x(1)) when index_xx_strided + xxk * dilation(0) - x_offs < dimensions_x(0) else (others => '0');
 
 					elsif yyk * dilation(1) - y_offs < 0 generate
-						mult_a(xxk + yyk * kernel_shape(0) + cc * kernel_shape(0) * kernel_shape(1)) <= x(index_xx_strided + index_yy_strided + (yyk * dilation(1) - y_offs) * dimensions_x(0) + cc * dimensions_x(0) * dimensions_x(1)) when index_yy * stride(1) + yyk * dilation(1) - y_offs >= 0 else (others => '0');
+						mult_a(xxk + yyk * kernel_shape(0) + cc * kernel_shape(0) * kernel_shape(1)) <= x(index_xx_strided + index_yy_strided + (yyk * dilation(1) - y_offs) * dimensions_x(0) + cc * dimensions_x(0) * dimensions_x(1)) when index_yy_strided + (yyk * dilation(1) - y_offs) * dimensions_x(0) * stride(1) >= 0 else (others => '0');
 
 					elsif yyk * dilation(1) - y_offs > 0 generate
-						mult_a(xxk + yyk * kernel_shape(0) + cc * kernel_shape(0) * kernel_shape(1)) <= x(index_xx_strided + index_yy_strided + (yyk * dilation(1) - y_offs) * dimensions_x(0) + cc * dimensions_x(0) * dimensions_x(1)) when index_yy * stride(1) + yyk * dilation(1) - y_offs < dimensions_x(1) else (others => '0');
+						mult_a(xxk + yyk * kernel_shape(0) + cc * kernel_shape(0) * kernel_shape(1)) <= x(index_xx_strided + index_yy_strided + (yyk * dilation(1) - y_offs) * dimensions_x(0) + cc * dimensions_x(0) * dimensions_x(1)) when index_yy_strided + (yyk * dilation(1) - y_offs) * dimensions_x(0) * stride(1) < dimensions_x(1) * dimensions_x(0) * stride(1) else (others => '0');
 
 					else generate
 						mult_a(xxk + yyk * kernel_shape(0) + cc * kernel_shape(0) * kernel_shape(1)) <= x(index_xx_strided + index_yy_strided + cc * dimensions_x(0) * dimensions_x(1));
