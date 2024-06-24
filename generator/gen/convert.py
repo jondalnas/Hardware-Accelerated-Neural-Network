@@ -2,7 +2,7 @@
 
 from math import log2
 
-from .loader import Model, ModelParams
+from .loader import Model, ModelParams, ConstNode
 
 def convert_model(model: Model) -> tuple[str, str]:
     nn = ""
@@ -62,7 +62,7 @@ def get_fsm(params: ModelParams) -> str:
     res = ""
 
     for i, n in enumerate(params.operations):
-        connection, should_handshake = n.generate_connections()
+        connection, output_connection, should_handshake = n.generate_connections()
 
         if i == len(params.operations) - 1:
             res += "            when others =>\n"
@@ -74,6 +74,7 @@ def get_fsm(params: ModelParams) -> str:
         if not should_handshake or i == 0:
             res +=  "                if " + n.name + "_valid_out then\n"
             res += f"                    next_state <= {i + 2};\n"
+            res += output_connection
             res +=  "                end if;\n"
         else:
             res += "                valid_out <= " + n.name + "_valid_out;\n"
@@ -86,6 +87,7 @@ def get_fsm(params: ModelParams) -> str:
                 res += "                    next_state <= 0;\n"
             else:
                 res += f"                    next_state <= {i + 2};\n"
+            res += output_connection
             res += "                end if;\n"
 
     return res
@@ -94,7 +96,10 @@ def get_init_signals(params: ModelParams) -> str:
     res = ""
 
     for n in params.operations:
-        for i, _ in enumerate(n.get_inputs()):
+        for i, input_node in enumerate(n.get_inputs()):
+            if isinstance(input_node, ConstNode):
+                continue
+
             res += "        " + n.name + f"_i_{i} <= (others => (others => '0'));\n"
 
         res += "        " + n.name + "_valid_in <= '0';\n"

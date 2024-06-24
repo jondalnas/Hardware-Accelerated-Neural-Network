@@ -45,6 +45,7 @@ begin
                 next_state <= 0;
                 if valid_in then
                     next_state <= 1;
+					next_was_valid <= '1';
                 end if;
 -- FSM
         end case;

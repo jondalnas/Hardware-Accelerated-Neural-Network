@@ -74,8 +74,9 @@ class Node:
     def calc_output_dimensions(self):
         pass
 
-    def generate_connections(self) -> tuple[str, bool]:
+    def generate_connections(self) -> tuple[str, str, bool]:
         res = ""
+        res_output = ""
 
         def rem_const(e: tuple[int, Node]):
             return not isinstance(e[1], ConstNode)
@@ -110,11 +111,11 @@ class Node:
             res += "                " + self.name + f"_i_{len(inputs)-1} <= feedback({curr_size - 1} downto 0);\n"
 
         if self.is_feedback:
-            res += f"                next_feedback({self.calc_output_node_size() - 1} downto 0) <= " + self.name + "_o;\n"
-            return (res, should_handshake)
+            res_output += f"                    next_feedback({self.calc_output_node_size() - 1} downto 0) <= " + self.name + "_o;\n"
+            return (res, res_output, should_handshake)
 
         res += f"                output({self.calc_output_node_size() - 1} downto 0) <= " + self.name + "_o;\n"
-        return (res, True)
+        return (res, res_output, True)
 
     def calc_instruction_list_at_node(self) -> list[Node | tuple[MemoryInstructions, int]]:
         instr: list[Node | tuple[MemoryInstructions, int]] = []
