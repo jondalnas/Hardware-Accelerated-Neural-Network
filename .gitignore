@@ -15,3 +15,6 @@ __pycache__/
 
 # Dia
 *.dia~
+
+# VSCode
+.vscode/

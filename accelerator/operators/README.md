@@ -2,23 +2,23 @@
 
 ## Fixed point representation
 
-As most values used for a neural net are between -1 and 1 we have chosen to use an s.15 fixed point representation of our numbers. 
+As most values used for a neural net are between -1 and 1 we have chosen to use an s.15 fixed point representation of our numbers, meaning we have 1 bit for the sign
 
 ## ONNX operators implemented
 
-All operators are implemented based on the ONNX version 1 description of each of them
+All operators are implemented based on the ONNX version 1 description of each of them. All operators have also been implemented with a Finite State Machine(FSM) to reduce the area of the generated circuit, and make it possible to synthesize on smaller FPGAs. On the Add and Div operators we expect both inputs to have the same dimensions. If this is not the case, the smallest of the two is broadcasted to fit the dimensions of the larger. This is done in the [generator](../../generator/README.md), where a broadcasting component is inserted when needed.
 
 ### Div
 
-
+The division operator has been implemented by having an index to chose which input values should be divided with each other. The division itself is a fix-point division component 
 
 ### Add
 
-
+The addition operator has been made by having an index to chose which of the input values should be added together. The result of this is then set to the corresponding index of the output.
 
 ### Relu
 
-
+The Relu operator uses an index to select which value from the input should be checked and used for the corresponding output. To check if the value is negative or not, the most significant bit is checked. This bit is the sign bit in our fix-point representation, and if it is set it means the value is negative. This means we can use this bit as a selector for a mux, selecting between either the value itself or 0.
 
 ### MatMul
 
@@ -26,7 +26,7 @@ All operators are implemented based on the ONNX version 1 description of each of
 
 ### MaxPool
 
-
+The MaxPool operator uses different indexes to select between the different kernels. These indexes are set and updated in the FSM while the kernel wires are generated with generator for-loops. A component for choosing the maximal value out of an array of values has been created which is connected to each kernel through muxes for the different values in the kernels. 
 
 ### Conv
 
