@@ -20,6 +20,8 @@ The generator also generates a definitions VHDL file with constants needed to ge
 - 2 : Push
 - 3 : Push and Load in
 
+A description of the different operators currently implemented can be found by following this [link](operators/README.md).
+
 ## Memory and Memory FSM
 
 The memory is split into two sections, the input and the stack. The input section stores the input sent from the interface over UART. The data stored in this section is only read by the memory FSM, and only modified by the UART controller. The stack section is used to store results from the neural network. These can either be fed back into the neural network as an input, or they can be read out by the UART controller, when the total neural net is done calculating. 

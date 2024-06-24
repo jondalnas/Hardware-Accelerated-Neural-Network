@@ -20,8 +20,8 @@ The accelerator has been tested on different FPGA boards, their status can be se
 
 To use the hardware accelerator for ONNX three steps need to be followed:
 
-1. Generate VHDL for neural net (Description)
-2. Synthesize neural net accelerator on FPGA (Description)
-3. Interface over UART for uploading inputs and downloading results (Description)
+1. Generate VHDL for neural net ([Description](generator/README.md))
+2. Synthesize neural net accelerator on FPGA ([Description](accelerator/README.md))
+3. Interface over UART for uploading inputs and downloading results ([Description](interface/README.md))
 
 A more thorough description of each can be found by following the links above.
