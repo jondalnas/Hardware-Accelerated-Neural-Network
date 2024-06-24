@@ -294,22 +294,33 @@ begin
         output <= (others => (others => '0'));
         Block386_i_0 <= (others => (others => '0'));
         Block386_i_1 <= (others => (others => '0'));
+        Block386_valid_in <= '0';
         Convolution28_i_0 <= (others => (others => '0'));
         Convolution28_i_1 <= (others => (others => '0'));
+        Convolution28_valid_in <= '0';
         Plus30_i_0 <= (others => (others => '0'));
         Plus30_i_1 <= (others => (others => '0'));
+        Plus30_valid_in <= '0';
         ReLU32_i_0 <= (others => (others => '0'));
+        ReLU32_valid_in <= '0';
         Pooling66_i_0 <= (others => (others => '0'));
+        Pooling66_valid_in <= '0';
         Convolution110_i_0 <= (others => (others => '0'));
         Convolution110_i_1 <= (others => (others => '0'));
+        Convolution110_valid_in <= '0';
         Plus112_i_0 <= (others => (others => '0'));
         Plus112_i_1 <= (others => (others => '0'));
+        Plus112_valid_in <= '0';
         ReLU114_i_0 <= (others => (others => '0'));
+        ReLU114_valid_in <= '0';
         Pooling160_i_0 <= (others => (others => '0'));
+        Pooling160_valid_in <= '0';
         Times212_i_0 <= (others => (others => '0'));
         Times212_i_1 <= (others => (others => '0'));
+        Times212_valid_in <= '0';
         Plus214_i_0 <= (others => (others => '0'));
         Plus214_i_1 <= (others => (others => '0'));
+        Plus214_valid_in <= '0';
 
         case state is
             when 0 =>

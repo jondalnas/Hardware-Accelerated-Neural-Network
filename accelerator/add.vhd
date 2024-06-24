@@ -83,4 +83,5 @@ begin
 	end process;
 
 	add_res <= a(index) + b(index);
+	c <= res;
 end Behavioral;
