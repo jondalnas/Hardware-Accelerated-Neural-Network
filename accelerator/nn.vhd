@@ -16,7 +16,10 @@ entity nn is
         valid_in : in std_logic;
         valid_out : out std_logic;
         input : in array_type(num_in-1 downto 0);
-        output : out array_type(num_out-1 downto 0)
+        output : out array_type(num_out-1 downto 0);
+        
+        -- Testing port
+        curr_state : out unsigned(7 downto 0)
      );
 end nn;
 
@@ -60,6 +63,7 @@ architecture Behavioral of nn is
     signal Plus214_i_1 : array_type(9 downto 0)(data_width-1 downto 0);
     signal Block386_valid_in, Block386_valid_out, Convolution28_valid_in, Convolution28_valid_out, Plus30_valid_in, Plus30_valid_out, ReLU32_valid_in, ReLU32_valid_out, Pooling66_valid_in, Pooling66_valid_out, Convolution110_valid_in, Convolution110_valid_out, Plus112_valid_in, Plus112_valid_out, ReLU114_valid_in, ReLU114_valid_out, Pooling160_valid_in, Pooling160_valid_out, Times212_valid_in, Times212_valid_out, Plus214_valid_in, Plus214_valid_out : std_logic;
 begin
+    curr_state <= to_unsigned(state, 8);
     Block386 : entity work.div
         generic map (
             input_size => 784,

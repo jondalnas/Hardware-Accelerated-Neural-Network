@@ -27,10 +27,7 @@ entity memory_fsm is
         from_mem    : in std_logic_vector(2 * data_width - 1 downto 0);
         mem_en      : out std_logic;
         mem_we      : out std_logic;
-        mem_addr    : out std_logic_vector(MEMORY_ADDR_SIZE-1 downto 0);
-        
-        --testing
-        curr_inst : out unsigned(INSTRUCTIONS'range)
+        mem_addr    : out std_logic_vector(MEMORY_ADDR_SIZE-1 downto 0)
     );
 end memory_fsm;
 
@@ -51,8 +48,6 @@ architecture Behavioral of memory_fsm is
     signal next_to_nn, to_nn : array_type(nn_num_in - 1 downto 0)(data_width - 1 downto 0);
 
 begin
-    curr_inst <= inst_count;
-
     process(all)
     begin
         led <= '0';

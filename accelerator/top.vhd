@@ -16,7 +16,7 @@ entity top is
         serial_rx  : out STD_LOGIC;      -- to the PC
         
         -- testing
-        inst_led : out unsigned(INSTRUCTIONS'range)
+        ledt : out unsigned(7 downto 0)
     );
 end top;
 
@@ -129,7 +129,8 @@ begin
             valid_in => valid_to_nn,
             valid_out => valid_from_nn,
             input => data_to_nn,
-            output => data_from_nn
+            output => data_from_nn,
+            curr_state => ledt
         );
         
 	memory_fsm_inst : entity work.memory_fsm
@@ -151,8 +152,7 @@ begin
             from_mem => dataR,
             mem_en => en,
             mem_we => we,
-            mem_addr => addr,
-            curr_inst => inst_led
+            mem_addr => addr
         );
 	
 	process(clk)
