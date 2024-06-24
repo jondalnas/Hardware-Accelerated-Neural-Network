@@ -97,6 +97,8 @@ def get_init_signals(params: ModelParams) -> str:
         for i, _ in enumerate(n.get_inputs()):
             res += "        " + n.name + f"_i_{i} <= (others => (others => '0'));\n"
 
+        res += "        " + n.name + "_valid_in <= '0';"
+
     return res
 
 def get_entities(params: ModelParams) -> str:
