@@ -51,6 +51,7 @@ architecture Behavioral of memory_fsm is
     signal next_to_nn, to_nn : array_type(nn_num_in - 1 downto 0)(data_width - 1 downto 0);
 
 begin
+    curr_inst <= inst_count;
 
     process(all)
     begin

@@ -13,7 +13,10 @@ entity top is
         start      : in  std_logic;
         -- Serial interface for PC communication
         serial_tx  : in  STD_LOGIC;     -- from the PC
-        serial_rx  : out STD_LOGIC      -- to the PC
+        serial_rx  : out STD_LOGIC;      -- to the PC
+        
+        -- testing
+        inst_led : out unsigned(INSTRUCTIONS'range)
     );
 end top;
 
@@ -148,7 +151,8 @@ begin
             from_mem => dataR,
             mem_en => en,
             mem_we => we,
-            mem_addr => addr
+            mem_addr => addr,
+            curr_inst => inst_led
         );
 	
 	process(clk)
