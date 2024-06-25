@@ -112,7 +112,8 @@ def get_entities(params: ModelParams) -> str:
     BROADCAST = ("    {}_bc : entity work.broad\n"
                  "        generic map(\n"
                  "            input_size => {},\n"
-                 "            output_size => {},\n"
+                 "            block_repeat => {},\n"
+                 "            element_repeat => {},\n"
                  "            data_width => {}\n"
                  "        )\n"
                  "        port map(\n"
@@ -123,8 +124,8 @@ def get_entities(params: ModelParams) -> str:
     for n in params.operations:
         res += n.to_vhdl_entity(16)
 
-        for index, input_size, output_size in n.get_input_broadcasts():
-            res += BROADCAST.format(n.name + "_" + str(index), input_size, output_size, 16, n.name + f"_i_{index}", n.name + f"_bc_i_{index}")
+        for index, input_size, block_repeat, element_repeat in n.get_input_broadcasts():
+            res += BROADCAST.format(n.name + "_" + str(index), input_size, block_repeat, element_repeat, 16, n.name + f"_i_{index}", n.name + f"_bc_i_{index}")
 
     return res
 

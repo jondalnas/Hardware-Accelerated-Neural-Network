@@ -61,7 +61,7 @@ class Node:
     def get_inputs(self) -> list[Node]:
         return []
 
-    def get_input_broadcasts(self) -> list[tuple[int, int, int]]:
+    def get_input_broadcasts(self) -> list[tuple[int, int, int, int]]:
         return []
 
     def get_input_index(self, node: Node) -> int:
@@ -199,10 +199,17 @@ class DivNode(Node):
     def get_inputs(self) -> list[Node]:
         return [self.a, self.b]
 
-    def get_input_broadcasts(self) -> list[tuple[int, int, int]]:
-        if self.is_broadcasting:
-            return [(1, self.b.calc_output_node_size(), self.calc_output_node_size())]
-        return []
+    def get_input_broadcasts(self) -> list[tuple[int, int, int, int]]:
+        if not self.is_broadcasting:
+            return []
+        element_repeat = 1
+        block_repeat = 1
+        for a in self.a.output_size[self.broadcast_axis + (len(self.b.output_size)):]:
+            element_repeat *= a
+        for a in self.a.output_size[:self.broadcast_axis - 1]:
+            block_repeat *= a
+
+        return [(1, self.b.calc_output_node_size(), block_repeat, element_repeat)]
 
     def replace_input(self, original: Node, new: Node):
         if self.a == original:
@@ -287,15 +294,15 @@ class ConvNode(Node):
     def get_inputs(self) -> list[Node]:
         return [self.x, self.w]
 
-    def get_input_broadcasts(self) -> list[tuple[int, int, int]]:
+    def get_input_broadcasts(self) -> list[tuple[int, int, int, int]]:
         if self.kernel_shape == self.w_dimensions[2:] and self.x_dimensions[1] == self.w_dimensions[1]:
             return []
 
         kernel_size = 1
         for k in self.kernel_shape:
             kernel_size *= k
-
-        return [(1, self.w.calc_output_node_size(), kernel_size * self.w_dimensions[0])]
+        #TODO : calculate element and block repeat correctly
+        return [(1, self.w.calc_output_node_size(), kernel_size * self.w_dimensions[0]/self.w.calc_output_node_size(), 1)]
 
     def replace_input(self, original: Node, new: Node):
         if self.x == original:
@@ -374,10 +381,17 @@ class AddNode(Node):
     def get_inputs(self) -> list[Node]:
         return [self.a, self.b]
 
-    def get_input_broadcasts(self) -> list[tuple[int, int, int]]:
-        if self.is_broadcasting:
-            return [(1, self.b.calc_output_node_size(), self.calc_output_node_size())]
-        return []
+    def get_input_broadcasts(self) -> list[tuple[int, int, int, int]]:
+        if not self.is_broadcasting:
+            return []
+        element_repeat = 1
+        block_repeat = 1
+        for a in self.a.output_size[self.broadcast_axis + (len(self.b.output_size)):]:
+            element_repeat *= a
+        for a in self.a.output_size[:self.broadcast_axis - 1]:
+            block_repeat *= a
+
+        return [(1, self.b.calc_output_node_size(), block_repeat, element_repeat)]
 
     def replace_input(self, original: Node, new: Node):
         if self.a == original:
@@ -577,12 +591,12 @@ class MatMulNode(Node):
     def get_inputs(self):
         return [self.a, self.b]
 
-    def get_input_broadcasts(self) -> list[tuple[int, int, int]]:
+    def get_input_broadcasts(self) -> list[tuple[int, int, int, int]]:
         if self.broadcasting == 0:
-            return [(0, self.a.calc_output_node_size(), self.calc_output_node_size())]
+            return [(0, self.a.calc_output_node_size(), self.calc_output_node_size()/self.b.calc_output_node_size(), 1)]
 
         if self.broadcasting == 1:
-            return [(1, self.b.calc_output_node_size(), self.calc_output_node_size())]
+            return [(1, self.b.calc_output_node_size(), self.calc_output_node_size()/self.b.calc_output_node_size(), 1)]
 
         return []
 
@@ -831,9 +845,8 @@ class Model:
             for i,input_node in enumerate(n.get_inputs()):
                 res.append((n.name + f"_i_{i}", input_node.calc_output_node_size()))
 
-            for index, _, size in n.get_input_broadcasts():
-                print(n.name)
-                res.append((n.name + f"_bc_i_{index}", size))
+            for index, input_size, block_repeat, element_repeat in n.get_input_broadcasts():
+                res.append((n.name + f"_bc_i_{index}", element_repeat*block_repeat*input_size))
 
         return res
 
