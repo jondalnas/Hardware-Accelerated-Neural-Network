@@ -77,7 +77,8 @@ begin
     Block386_1_bc : entity work.broad
         generic map(
             input_size => 1,
-            output_size => 784,
+            block_repeat => 1,
+            element_repeat => 784,
             data_width => 16
         )
         port map(
@@ -124,7 +125,8 @@ begin
     Plus30_1_bc : entity work.broad
         generic map(
             input_size => 8,
-            output_size => 6272,
+            block_repeat => 1,
+            element_repeat => 784,
             data_width => 16
         )
         port map(
@@ -204,7 +206,8 @@ begin
     Plus112_1_bc : entity work.broad
         generic map(
             input_size => 16,
-            output_size => 3136,
+            block_repeat => 1,
+            element_repeat => 196,
             data_width => 16
         )
         port map(
