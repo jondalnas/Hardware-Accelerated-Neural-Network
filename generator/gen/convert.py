@@ -168,7 +168,7 @@ def get_nn_sizes(params: ModelParams) -> str:
             f"    constant NN_OUTPUT : Integer := {params.max_output};\n"
             f"    constant NN_FEEDBACK : Integer := {params.max_feedback};\n")
 
-def int_to_std_logic_vector(val: float, data_width: int = 16, decimal_place = 1, signed: bool = True):
+def int_to_std_logic_vector(val: float, data_width: int = 16, decimal_place = 8, signed: bool = True):
     val *= 1 << (data_width - decimal_place)
 
     max_val = 1 << data_width if not signed else 1 << (data_width - 1)

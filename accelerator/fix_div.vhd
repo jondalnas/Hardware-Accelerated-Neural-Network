@@ -36,7 +36,7 @@ begin
     
     shift_gen : for i in 0 to data_width - 2 generate
         int_if : if (INTEGER_WIDTH - 2 - i) >= 0 generate
-            x_shift(data_width - 2 - i) <= x_s(data_width - 2 - (INTEGER_WIDTH - 2 - i) downto 0) & (-(INTEGER_WIDTH - 2 - i) - 1 downto 0 => '0');
+            x_shift(data_width - 2 - i) <= x_s(data_width - 2 - (INTEGER_WIDTH - 2 - i) downto 0) & (data_width - 1 - (data_width - 1 - (INTEGER_WIDTH - 2 - i)) - 1 downto 0 => '0');
         else generate
             x_shift(data_width - 2 - i) <= (-(INTEGER_WIDTH - 2 - i) - 1 downto 0 => '0') & x_s(data_width - 2 downto i - (INTEGER_WIDTH - 2)) + x_s(i - (INTEGER_WIDTH - 2) - 1);
         end generate; 

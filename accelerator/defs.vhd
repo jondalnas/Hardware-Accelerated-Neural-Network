@@ -7,7 +7,7 @@ package defs is
     constant INPUT_SIZE : Integer := 784;
     constant OUTPUT_SIZE : Integer := 10;
     constant DATA_WIDTH : Integer := 16;
-    constant INTEGER_WIDTH : Integer := 1;
+    constant INTEGER_WIDTH : Integer := 8;
     constant DECIMAL_WIDTH : Integer := DATA_WIDTH - INTEGER_WIDTH;
     constant INST_SIZE : Integer := 3;
     constant NN_INPUT : Integer := 784;
