@@ -2,7 +2,7 @@
 
 ## Fixed point representation
 
-As most values used for a neural net are between -1 and 1 we have chosen to use an s.15 fixed point representation of our numbers, meaning we have 1 bit for the sign
+As most values used for a neural net are between -1 and 1 we have chosen to use an s7.8 fixed point representation of our numbers, meaning we have 1 bit for the sign, seven bits for the integer representation and 8 bits for the decimal representation. We have chosen this format as we during some parts of the calculation end up with results which are more than 1. The format can be explored in detail by using the [Q-format Converter & Calculator](https://chummersone.github.io/qformat.html).
 
 ## ONNX operators implemented
 
