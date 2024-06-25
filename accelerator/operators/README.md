@@ -10,7 +10,13 @@ All operators are implemented based on the ONNX version 1 description of each of
 
 ### Div
 
-The division operator has been implemented by having an index to chose which input values should be divided with each other. The division itself is a fix-point division component 
+The division operator has been implemented by having an index to chose which input values should be divided with each other. The division itself is a fixed-point division component, specifically implemented to handle different fixed-point formats, though all signed. The divisor  is first left shifted by the integer width - 2. If this value is negative, it is right shifted by the absolute value of it instead.  
+Once the divisor has been shifted, it is subtracted from the dividend. If this number is negative it means that the divisor is bigger than the dividend. The divisor is then right shifted once and the divisor is then subtracted from the dividend. If the subtraction result if positive the subtraction result is used as the dividend when the divisor is right shifted.  
+A block diagram of the fixed-point division unit can be seen in the image below.
+
+![Division unit for fixed-point division](../Diagrams/Division-unit.svg)
+
+Then for each of the values being divided an index is used to select which values should be divided with each other, which is then set to the corresponding output index.
 
 ### Add
 
@@ -18,7 +24,7 @@ The addition operator has been made by having an index to chose which of the inp
 
 ### Relu
 
-The Relu operator uses an index to select which value from the input should be checked and used for the corresponding output. To check if the value is negative or not, the most significant bit is checked. This bit is the sign bit in our fix-point representation, and if it is set it means the value is negative. This means we can use this bit as a selector for a mux, selecting between either the value itself or 0.
+The Relu operator uses an index to select which value from the input should be checked and used for the corresponding output. To check if the value is negative or not, the most significant bit is checked. This bit is the sign bit in our fixed-point representation, and if it is set it means the value is negative. This means we can use this bit as a selector for a mux, selecting between either the value itself or 0.
 
 ### MatMul
 
