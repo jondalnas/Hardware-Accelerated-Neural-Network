@@ -1,4 +1,5 @@
 # Results From Simulation
+
 By creating images of different numbers in our interface program and exporting them, we can run our simulation on them and see what the neural network finds
 
 Bellow is the images we have used together with a number indicating which index it has, bellow that is a table with the models predictions.
@@ -16,3 +17,9 @@ Bellow is the images we have used together with a number indicating which index 
 |2|0.8984375    |-0.21484375|*0.6953125*   |0.3046875     |1.640625      |-1.01953125   |-0.30859375  |**1.59375**|-2.8203125    |0.0703125     |0.02734375    |0.59375    |0.0390625  |-0.53515625|
 |1|1.00390625   |**2.125**  |1.140625      |0.5390625     |2.01171875    |1.26953125    |0.96484375   |-1.75      |0.6875        |-1.890625     |-1.0078125    |0.51171875 |-0.08203125|-0.2421875 |
 |0|*-1.3203125* |-0.88671875|-1.16015625   |0.62109375    |-0.55078125   |-1.08984375   |-1.1171875   |0.22265625 |-1.6015625    |-0.12890625   |-0.6171875    |-0.0390625 |-0.78125   |-0.109375  |
+
+**Bold** text is the highest value
+
+*Italic* is the correct answer
+
+# Results from synthesis
