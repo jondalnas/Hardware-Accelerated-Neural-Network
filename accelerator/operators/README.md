@@ -24,15 +24,16 @@ The addition operator has been made by having an index to chose which of the inp
 
 ### Relu
 
-The Relu operator uses an index to select which value from the input should be checked and used for the corresponding output. To check if the value is negative or not, the most significant bit is checked. This bit is the sign bit in our fixed-point representation, and if it is set it means the value is negative. This means we can use this bit as a selector for a mux, selecting between either the value itself or 0.
+The Relu operator is used to set values to be between 0 and 1. If a value is less negative it will be set to 0. The operator uses an index to select which value from the input should be checked and used for the corresponding output. To check if the value is negative or not, the most significant bit is checked. This bit is the sign bit in our fixed-point representation, and if it is set it means the value is negative. This means we can use this bit as a selector for a mux, selecting between either the value itself or 0.
 
 ### MatMul
 
-
+The MatMul operator performs a matrix multiplication on two input matrices. The output matrix will end up with the height of the a input matrix and the width of the b input matrix. An index is used to loop through all output values, while x and y indices are used to select the row from a and the column from b. The values in the row and column are multiplied together individually, and the results are then added together to give the output value.
 
 ### MaxPool
 
-The MaxPool operator uses different indexes to select between the different kernels. These indexes are set and updated in the FSM while the kernel wires are generated with generator for-loops. A component for choosing the maximal value out of an array of values has been created which is connected to each kernel through muxes for the different values in the kernels. 
+The MaxPool operator runs a kernel over an input tensor and chooses the maximal value within the kernel to use for the output. The operator uses different indexes to select between the different kernels. These indexes are set and updated in the FSM while the kernel wires are generated with generator for-loops. A component for choosing the maximal value out of an array of values has been created which is connected to each kernel through muxes for the different values in the kernels. 
 
 ### Conv
 
+The Conv operator performs a convolution between an input tensor and a weighted kernel. The input tensor is connected to the multiplier by going through the shape of the kernel and connecting each wire to the correct input value, depending on a strided x index and a strided y index. Once all values in a kernel has been multiplied by their respective weights, it is added up and the result is set to the corresponding output value. 
