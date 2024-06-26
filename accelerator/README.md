@@ -13,12 +13,13 @@ The structure of hardware accelerator is shown in the image below
 
 The neural network is described using the generator and then connected to the memory FSM for control of data. The neural net will first start calculating when the `valid_in` signal is high. When the neural net is done calculating and is the output data is valid, it holds the `valid_out` signal high.
 
-The generator also generates a definitions VHDL file with constants needed to generate the neural net. In this file there is also an array of instructions, where the 2 lower bits are the instruction number and the 16 upper bits are the the memory address needed for this instruction. There are 4 different types of instructions:
+The generator also generates a definitions VHDL file with constants needed to generate the neural net. In this file there is also an array of instructions, where the 3 lower bits are the instruction number and the 16 upper bits are the the memory address needed for this instruction. There are 5 different types of instructions:
 
 - 0 : Load in
 - 1 : Load stack
 - 2 : Push
 - 3 : Push and Load in
+- 4 : Load in and Load stack
 
 A more detailed description of the different operators currently implemented can be found by following this [link](operators/README.md).
 

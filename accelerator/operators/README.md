@@ -24,7 +24,7 @@ The addition operator has been made by having an index to chose which of the inp
 
 ### Relu
 
-The Relu operator is used to set values to be between 0 and 1. If a value is less negative it will be set to 0. The operator uses an index to select which value from the input should be checked and used for the corresponding output. To check if the value is negative or not, the most significant bit is checked. This bit is the sign bit in our fixed-point representation, and if it is set it means the value is negative. This means we can use this bit as a selector for a mux, selecting between either the value itself or 0.
+The Relu operator is used to set values to be greater than or equal to 0. If a value is less negative it will be set to 0. The operator uses an index to select which value from the input should be checked and used for the corresponding output. To check if the value is negative or not, the most significant bit is checked. This bit is the sign bit in our fixed-point representation, and if it is set it means the value is negative. This means we can use this bit as a selector for a mux, selecting between either the value itself or 0.
 
 ### MatMul
 

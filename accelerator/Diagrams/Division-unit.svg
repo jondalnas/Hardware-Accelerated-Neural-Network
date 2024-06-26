@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
-<svg width="34cm" height="46cm" viewBox="289 138 673 902" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="34cm" height="46cm" viewBox="289 138 672 902" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <g>
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="660,380 740,380 720,420 680,420 "/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="700" y="404">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="700" y="404">
       <tspan x="700" y="404"></tspan>
     </text>
   </g>
   <g>
     <rect style="fill: #ffffff" x="380" y="160" width="156" height="80"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="380" y="160" width="156" height="80"/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="458" y="203.9">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="458" y="203.9">
       <tspan x="458" y="203.9">&lt;&lt; Integer Width -2</tspan>
     </text>
   </g>
   <g>
     <rect style="fill: #ffffff" x="660" y="260" width="80" height="49"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="260" width="80" height="49"/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="700" y="288.4">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="700" y="288.4">
       <tspan x="700" y="288.4">-</tspan>
     </text>
   </g>
@@ -62,30 +62,30 @@
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="659,405 669,400 659,395 "/>
   </g>
   <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="650" y1="360" x2="630" y2="380"/>
-  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="616" y="376">
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="616" y="376">
     <tspan x="616" y="376">1</tspan>
   </text>
   <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="718" y1="350" x2="698" y2="370"/>
-  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="720" y="360">
-    <tspan x="720" y="360">data_width - 2</tspan>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="720" y="360">
+    <tspan x="720" y="360">data_width</tspan>
   </text>
   <g>
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="660,650 740,650 720,690 680,690 "/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="700" y="674">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="700" y="674">
       <tspan x="700" y="674"></tspan>
     </text>
   </g>
   <g>
     <rect style="fill: #ffffff" x="380" y="430" width="156" height="80"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="380" y="430" width="156" height="80"/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="458" y="473.9">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="458" y="473.9">
       <tspan x="458" y="473.9">&lt;&lt; Integer Width -3</tspan>
     </text>
   </g>
   <g>
     <rect style="fill: #ffffff" x="660" y="530" width="80" height="49"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="530" width="80" height="49"/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="700" y="558.4">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="700" y="558.4">
       <tspan x="700" y="558.4">-</tspan>
     </text>
   </g>
@@ -129,12 +129,12 @@
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="659,675 669,670 659,665 "/>
   </g>
   <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="650" y1="630" x2="630" y2="650"/>
-  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="616" y="646">
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="616" y="646">
     <tspan x="616" y="646">1</tspan>
   </text>
   <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="718" y1="620" x2="698" y2="640"/>
-  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="720" y="630">
-    <tspan x="720" y="630">data_width - 2</tspan>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="720" y="630">
+    <tspan x="720" y="630">data_width</tspan>
   </text>
   <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="700,420 700,450 680,450 680,490 "/>
   <g>
@@ -157,30 +157,30 @@
   </g>
   <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="310" y1="200" x2="310" y2="470"/>
   <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="310" y1="160" x2="310" y2="200"/>
-  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="650" y="150">
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="650" y="150">
     <tspan x="650" y="150">Dividend</tspan>
   </text>
-  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="290" y="150">
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="290" y="150">
     <tspan x="290" y="150">Divisor</tspan>
   </text>
   <g>
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="660,1000 740,1000 720,1040 680,1040 "/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="700" y="1024">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="700" y="1024">
       <tspan x="700" y="1024"></tspan>
     </text>
   </g>
   <g>
     <rect style="fill: #ffffff" x="380" y="780" width="156" height="80"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="380" y="780" width="156" height="80"/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="458" y="815.9">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="458" y="815.9">
       <tspan x="458" y="815.9">&lt;&lt; Integer Width -</tspan>
-      <tspan x="458" y="831.9">data_width - 2</tspan>
+      <tspan x="458" y="831.9">data_width - 1</tspan>
     </text>
   </g>
   <g>
     <rect style="fill: #ffffff" x="660" y="880" width="80" height="49"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="880" width="80" height="49"/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="700" y="908.4">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="700" y="908.4">
       <tspan x="700" y="908.4">-</tspan>
     </text>
   </g>
@@ -224,12 +224,12 @@
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="659,1025 669,1020 659,1015 "/>
   </g>
   <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="650" y1="980" x2="630" y2="1000"/>
-  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="616" y="996">
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="616" y="996">
     <tspan x="616" y="996">1</tspan>
   </text>
   <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="718" y1="970" x2="698" y2="990"/>
-  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="720" y="980">
-    <tspan x="720" y="980">data_width - 2</tspan>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="720" y="980">
+    <tspan x="720" y="980">data_width</tspan>
   </text>
   <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="700,770 700,800 680,800 680,840 "/>
   <g>
@@ -242,10 +242,10 @@
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="368.005,825 378.005,820 368.005,815 "/>
   </g>
   <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="310" y1="700" x2="310" y2="820"/>
-  <text font-size="45.7645" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="290" y="620">
+  <text font-size="45.7652" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="290" y="620">
     <tspan x="290" y="620">...</tspan>
   </text>
-  <text font-size="45.7645" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="680" y="740">
+  <text font-size="45.7652" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="680" y="740">
     <tspan x="680" y="740">...</tspan>
   </text>
   <g>
@@ -263,13 +263,13 @@
     <polygon style="fill: #000000" points="829,965 839,960 829,955 "/>
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="829,965 839,960 829,955 "/>
   </g>
-  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="840" y="330">
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="840" y="330">
     <tspan x="840" y="330">res(data_width - 2)</tspan>
   </text>
-  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="840" y="600">
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="840" y="600">
     <tspan x="840" y="600">res(data_width - 3)</tspan>
   </text>
-  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="840" y="950">
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="840" y="950">
     <tspan x="840" y="950">res(0)</tspan>
   </text>
 </svg>

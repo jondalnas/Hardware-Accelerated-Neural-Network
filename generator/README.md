@@ -2,10 +2,10 @@
 The generator is used to generate the neural network VHDL file, from a supplied ONNX file. The program uses the onnx python library to read the file, and then convert it a graph, that can be written out ot a file.
 
 # How to Use
-To run the program, execute the main Python file with the path to the ONNX file you want to convert, e.g. if the path to the file is "/home/accel/graph.onnx" (path substitution for e.g. "~" is also possible):
+To run the program, execute the main Python file with the path to the ONNX file you want to convert, the path to nn.vhd file and the path to the defs.vhd file, e.g. if the path to the file is "/home/accel/graph.onnx", the path to the nn is "/path/to/nn.vhd" and the path to the defs is "/path/to/defs.vhd" (path substitution for e.g. "~" is also possible):
 
 ```
-python . /home/accel/graph.onnx
+python . /home/accel/graph.onnx /path/to/nn.vhd /path/to/defs.vhd
 ```
 
 # How it Works

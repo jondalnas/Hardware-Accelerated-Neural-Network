@@ -21,7 +21,7 @@ Pressing the download button results in the data being copied over from the FPGA
 ## Communication
 Communication with the FPGA happens over UART, with the python Serial library to establish it. To do this, a call to ```open_port``` is made, which first establishes the connection, with a given baude rate to a given port, then the ```test``` function is called, which sends a 't' to the FPGA, and expects a 'y' in return, this makes sure that it is our hardware we are connected to. Lastly the FPGA memory is cleared with the ```clear``` function, which sends a 'c' to the FPGA. After this point, the communication to the FPGA is established and data can now be moved.
 
-To send the image to the FPGA, a call to ```send_img``` is made, which first sends a 'w', indicating that we want to send the input data, then it goes through each pixel of the image, and sends it to the FPGA 2 byte values, capped at $2^16-1$.
+To send the image to the FPGA, a call to ```send_img``` is made, which first sends a 'w', indicating that we want to send the input data, then it goes through each pixel of the image, and sends it to the FPGA 2 byte values, capped at $2^{16}-1$.
 
 To recieve the data from the FPGA, a call to ```recv_vector``` is made, which first sends an 'r', indicating that we expect the FPGA to send its data to us, then we append each 2 byte par to an array, and convert it to an integer.
 
