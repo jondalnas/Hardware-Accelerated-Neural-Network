@@ -8,10 +8,10 @@ The synthesis has been tested in both Vivado 2024.1 and 2023.2. Vivado 2024.1 th
 
 The accelerator has been tested on different FPGA boards, their status can be seen in the table below.
 
-|FPGA       |Status   |
-|-----------|---------|
-|Nexys 4 DDR|✅     |
-|Basys 3    |❌ (Broken UART)      |
+|FPGA       |Status   | Notes
+|-----------|---------|----|
+|Nexys 4 DDR|❌      |Too small|
+|Basys 3    |❌      |Broken UART|
 
 
 ✅ means working  
@@ -29,12 +29,14 @@ A more thorough description of each can be found by following the links above.
 
 # What Works
 
-|Generate VHDL project from ONNX file|✅||
+|Feature | Implementation status|Notes |
+|--------|----------------------|------|
+|Generate VHDL project from ONNX file|✅| Only using implemented operators|
 |Interface with FPGA over UART|✅||
 |Simulate NN|✅||
-|Synthesyse NN|✅||
-|Implementeble on Nexys 4 DDR|❌|Too many LUTs and DFFs (see [utilization](accelerator/test.md))|
-|Tested on FPGA|❌||
+|Synthesize NN|✅||
+|Implementable on Nexys 4 DDR|❌|Too many LUTs and DFFs (see [utilization](accelerator/test.md))|
+|Tested on FPGA|❌|See point above|
 
 ## Future work
 * Removing constants

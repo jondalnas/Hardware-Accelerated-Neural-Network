@@ -23,3 +23,16 @@ Bellow is the images we have used together with a number indicating which index 
 *Italic* is the correct answer
 
 # Results from synthesis
+
+Below is the utilization report of slice logic for the synthesized design, when it is synthesized for the Nexys 4 DDR FPGA.
+
+|        Site Type        |   Used  | Fixed | Prohibited | Available |  Util%  |
+|-------------------------|---------|-------|------------|-----------|---------|
+| Slice LUTs              | 1477905 |     0 |          0 |     63400 | 2331.08 |
+|   LUT as Logic          | 1477905 |     0 |          0 |     63400 | 2331.08 |
+|   LUT as Memory         |       0 |     0 |          0 |     19000 |    0.00 |
+| Slice Registers         |  607512 |     0 |          0 |    126800 |  479.11 |
+|   Register as Flip Flop |  607421 |     0 |          0 |    126800 |  479.04 |
+|   Register as Latch     |      91 |     0 |          0 |    126800 |    0.07 |
+| F7 Muxes                |  225419 |     0 |          0 |     31700 |  711.10 |
+| F8 Muxes                |   98353 |     0 |          0 |     15850 |  620.52 |
